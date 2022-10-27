@@ -2,10 +2,6 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - name: "Stellar Quest"
-    command: |
-      cd client
-      npm run client:dev
   - name: Futurenet
     init: | 
       docker pull stellar/quickstart:soroban-dev
@@ -52,10 +48,6 @@ github:
 ports:
   - name: Horizon + RPC endpoint
     port: 8000
-    visibility: public
-    onOpen: ignore
-  - name: Stellar Quest
-    port: 3000
     visibility: public
     onOpen: ignore
   - port: 4226
