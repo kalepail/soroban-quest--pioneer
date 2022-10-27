@@ -1,0 +1,5 @@
+.DS_Store
+target
+.sccache
+.soroban
+node_modules
