@@ -1,24 +1,46 @@
-[workspace]
-resolver = "2"
+# This file serves as a manifest that describes how our project is organized,
+# how it should function, dependencies, and other metadata.
 
+# A workspace is a collection of different Rust packages that are managed
+# together, using the same commands, configuration, etc.
+[workspace]
+# We want to use v2 of the cargo dependency resolver.
+resolver = "2"
+# Our workspace members include the packages in the quests directory.
 members = [
     "quests/1-hello-world"
 ]
 
+# Here we specify our compiler settings as a "profile" that we specify when we
+# build our package.
 [profile.release-with-logs]
+# The "release-with-logs" profile is almost identical to the "release" profile
 inherits = "release"
+# EXCEPT we want to include runtime validation when building for development
 debug-assertions = true
 
+# The "release" profile specifies compiler options for our production build.
 [profile.release]
+# Optimize for binary size, turn off loop vectorization.
 opt-level = "z"
+# A panic should occur in the event of a runtime integer overflow.
 overflow-checks = true
+# Don't include any debug into in the compiled binary.
 debug = 0
+# Remove auxiliary debug and symbol data from the compiled binary.
 strip = "symbols"
+# Don't include runtime validation when building for production.
 debug-assertions = false
+# Terminate the process when the code panics.
 panic = "abort"
+# Prefer a slow compilation time, for a faster performing binary.
 codegen-units = 1
+# Use link time optimizations to generate a better optimzed binary.
 lto = true
 
+# Our dependencies are specified within each of the quest packages. This "patch"
+# section contains specific crate overrides that will be used instead of the
+# crates published on crates.io (the default crate registry).
 [patch.crates-io]
 soroban-sdk = { git = "https://github.com/stellar/rs-soroban-sdk", rev = "38f3768" }
 soroban-spec = { git = "https://github.com/stellar/rs-soroban-sdk", rev = "38f3768" }
