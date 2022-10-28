@@ -33,12 +33,20 @@ tasks:
     command: |
       clear
   # This "CLI - Sandbox" task provides a place to run contracts in a local
+<<<<<<< HEAD
   # sandbox environment. We need to invoke `cargo fetch` several times /shrug.
   - name: CLI - Sandbox
     before: |
       cargo fetch
     init: |
       cargo fetch
+=======
+  # sandbox environment.
+  - name: CLI - Sandbox
+    # init: |
+    #   cargo fetch
+    #   make build test
+>>>>>>> 66f5040847193de99332a523fb4889cef519d0c7
     # We open the `README.md` file and then clear the terminal output.
     command: |
       cargo fetch
