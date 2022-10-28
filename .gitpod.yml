@@ -74,7 +74,7 @@ ports:
     port: 8000
     visibility: public
     onOpen: ignore
-  # This port is open for "something"?
+  # This port is open for "Something with cargo test I think"??
   - port: 4226
     visibility: private
     onOpen: ignore
