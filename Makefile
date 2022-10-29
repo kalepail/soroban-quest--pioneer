@@ -3,10 +3,10 @@ default: build
 all: build test
 
 test: build
-	cargo hack --feature-powerset test
+	cargo test
 
-build: 
-	cargo hack build --target wasm32-unknown-unknown --release
+build:
+	cargo build --target wasm32-unknown-unknown --release
 
 watch:
 	cargo watch --clear --watch-when-idle --shell '$(MAKE)'
