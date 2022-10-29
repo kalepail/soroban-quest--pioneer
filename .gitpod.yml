@@ -21,12 +21,10 @@ tasks:
     command: |
       clear
   - name: CLI – Sandbox
-    before: |
-      cargo fetch
     init: |
       cargo fetch
+      make build test
     command: |
-      cargo fetch
       gp open README.md
       clear
 
