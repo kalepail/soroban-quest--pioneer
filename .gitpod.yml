@@ -22,8 +22,9 @@ tasks:
       clear
   - name: CLI – Sandbox
     init: |
+      cargo clean
       cargo fetch
-      make build test
+      make build
     command: |
       gp open README.md
       clear
