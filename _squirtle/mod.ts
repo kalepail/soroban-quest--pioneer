@@ -9,8 +9,6 @@ const runLogin = async () => {
   const isDev = ENV !== 'prod'
   const apiUrl = isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
 
-  console.log(AUTH_TOKEN);
-
   if (AUTH_TOKEN)
     user = await getUser(env)
 
