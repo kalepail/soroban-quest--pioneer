@@ -25,6 +25,7 @@ tasks:
       cargo clean
       cargo fetch
       make build
+      cargo test -p soroban-hello-world-contract
     command: |
       gp open README.md
       clear
