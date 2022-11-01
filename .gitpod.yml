@@ -3,16 +3,14 @@ image:
 
 tasks:
   - name: "Albedo Signer"
-  - init: |
-      cd squirtle
+    init: |
+      cd _squirtle
       npm run compile
     command: |
-      cd squirtle
+      cd _squirtle
       npm run bin
-      cd ../
-      rm -rf squirtle
+      cd ../_client
       clear
-      cd client
       npm run start
   - name: Futurenet
     init: | 
