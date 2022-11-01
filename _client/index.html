@@ -9,7 +9,9 @@
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
   <script>
-    const CLAIM_TOKEN = getClaimToken()
+    const { CLAIM_TOKEN, ENV } = getEnv()
+    const isDev = ENV !== 'prod'
+    const apiUrl = isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
 
     async function albedoOpen(e, _claimToken, _xdr) {
       const url = new URL(location.href)
@@ -27,7 +29,7 @@
         description: 'Claim your Stellar Quest reward'
       })
       .then(({ signed_envelope_xdr }) =>
-        fetch('https://api.stellar.quest/prize/claim', {
+        fetch(`${apiUrl}/prize/claim`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -62,11 +64,11 @@
       })
     }
 
-    function getClaimToken() {
-      return fetch('/claim-token')
+    function getEnv() {
+      return fetch('/env')
       .then((res) => {
         if (res.ok)
-          return res.text()
+          return res.json()
         else
           throw res
       })

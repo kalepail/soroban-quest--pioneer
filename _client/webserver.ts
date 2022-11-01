@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.159.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.161.0/http/server.ts";
 
 const port = 3000;
 
@@ -41,15 +41,17 @@ const handler = async (request: Request): Promise<Response> => {
     });
   }
 
-  else if (url.toString().includes('claim-token')) {
+  else if (url.toString().includes('env')) {
     const env = await getEnv()
 
-    if (!env?.CLAIM_TOKEN) return new Response('Not Found', {
-      status: 404,
-    });
-
-    else return new Response(env.CLAIM_TOKEN, {
+    return new Response(JSON.stringify({
+      CLAIM_TOKEN: env.CLAIM_TOKEN,
+      ENV: env.ENV,
+    }), {
       status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   }
 
@@ -76,16 +78,28 @@ const getEnv = async () => {
     cmd: ['gp', 'env'],
     stdout: 'piped'
   })
-  const output = await run1.output()
-  const envString = new TextDecoder().decode(output)
+  const gpEnvString = new TextDecoder().decode(await run1.output()).trim()
+
+  const run2 = Deno.run({
+    cmd: ['env'],
+    stdout: 'piped'
+  })
+  const bashEnvString = new TextDecoder().decode(await run2.output()).trim()
 
   const env: any = {}
 
-  envString
-    .trim()
+  gpEnvString
     .split('\n')
     .map((env) => env.split('='))
     .forEach(([key, value]) => env[key] = value)
+
+  bashEnvString
+    .split('\n')
+    .map((env) => env.split('='))
+    .forEach(([key, value]) => {
+      if (['ENV'].includes(key)) // Only pick those VARS we actually want
+        env[key] = value
+    })
 
   return env
 }
