@@ -5,7 +5,11 @@ const runLogin = async () => {
   let env: any = await getEnv()
   let user
 
-  const { AUTH_TOKEN } = env
+  const { AUTH_TOKEN, ENV } = env
+  const isDev = ENV !== 'prod'
+  const apiUrl = isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
+
+  console.log(AUTH_TOKEN);
 
   if (AUTH_TOKEN)
     user = await getUser(env)
@@ -23,8 +27,8 @@ const runLogin = async () => {
     const output = await run1.output()
     const gitpodUrl = new URL(new TextDecoder().decode(output))
     const discordUrl = new URL('https://discord.com/api/oauth2/authorize')
-    discordUrl.searchParams.append('client_id', '775714192161243161'); // Should this be an env var??
-    discordUrl.searchParams.append('redirect_uri', 'https://api.stellar.quest/hooks/discord/code');
+    discordUrl.searchParams.append('client_id', isDev ? '1024724391759724627' : '775714192161243161');
+    discordUrl.searchParams.append('redirect_uri', `${apiUrl}/hooks/discord/code`);
     discordUrl.searchParams.append('response_type', 'code');
     discordUrl.searchParams.append('scope', 'identify email connections');
     discordUrl.searchParams.append('prompt', 'consent');
@@ -36,7 +40,7 @@ const runLogin = async () => {
     })
     await run2.status()
 
-    // await until gp env includes REFRESH_TOKEN and ACCESS_TOKEN (or timeout after 5 minutes??)
+    // await until gp env includes AUTH_TOKEN (or timeout after 5 minutes??)
     await new Promise((resolve) => {
       const interval = setInterval(async () => {
         env = await getEnv()
@@ -63,7 +67,9 @@ const runUser = async (
   if (!env)
     env = await getEnv()
 
-  const { AUTH_TOKEN } = env
+  const { AUTH_TOKEN, ENV } = env
+  const isDev = ENV !== 'prod'
+  const siteUrl = isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
 
   if (!AUTH_TOKEN)
     return console.log(`Please run the <login> command first`);
@@ -109,15 +115,21 @@ const runUser = async (
       return
 
     const run1 = Deno.run({
-      cmd: ['gp', 'preview', '--external', 'https://quest.stellar.org/settings']
+      cmd: ['gp', 'preview', '--external', `${siteUrl}/settings`]
     })
     await run1.status()
   }
 }
 
-const runOpen = () => {
+const runOpen = async () => {
+  const env = await getEnv()
+
+  const { ENV } = env
+  const isDev = ENV !== 'prod'
+  const siteUrl = isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
+
   const run1 = Deno.run({
-    cmd: ['gp', 'preview', '--external', 'https://quest.stellar.org']
+    cmd: ['gp', 'preview', '--external', siteUrl]
   })
   return run1.status()
 }
@@ -127,6 +139,10 @@ const runLogout = () => {
     cmd: ['gp', 'env', '-u', 'AUTH_TOKEN'],
   })
   return run1.status()
+}
+
+const runCheck = () => {
+  console.log('Check command intentionally left empty for now...');
 }
 
 const runPull = async () => {
@@ -159,10 +175,6 @@ const runPlay = () => {
   console.log('Play command intentionally left empty for now...');
 }
 
-const runCheck = () => {
-  console.log('Check command intentionally left empty for now...');
-}
-
 const runSubmit = () => {
   console.log('Submit command intentionally left empty for now...');
 }
@@ -172,24 +184,38 @@ const getEnv = async () => {
     cmd: ['gp', 'env'],
     stdout: 'piped'
   })
-  const output = await run1.output()
-  const envString = new TextDecoder().decode(output)
+  const gpEnvString = new TextDecoder().decode(await run1.output()).trim()
+
+  const run2 = Deno.run({
+    cmd: ['env'],
+    stdout: 'piped'
+  })
+  const bashEnvString = new TextDecoder().decode(await run2.output()).trim()
 
   const env: any = {}
 
-  envString
-    .trim()
+  gpEnvString
     .split('\n')
     .map((env) => env.split('='))
     .forEach(([key, value]) => env[key] = value)
+
+  bashEnvString
+    .split('\n')
+    .map((env) => env.split('='))
+    .forEach(([key, value]) => {
+      if (['ENV'].includes(key)) // Only pick those VARS we actually want
+        env[key] = value
+    })
 
   return env
 }
 
 const getUser = (env: any) => {
-  const { AUTH_TOKEN } = env
+  const { AUTH_TOKEN, ENV } = env
+  const isDev = ENV !== 'prod'
+  const apiUrl = isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
 
-  return fetch('https://api.stellar.quest/user', {
+  return fetch(`${apiUrl}/user`, { 
     headers: {
       'Authorization': `Bearer ${AUTH_TOKEN}`
     }
