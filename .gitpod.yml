@@ -7,7 +7,7 @@ tasks:
       cd squirtle
       npm run package
       cd ../
-      # rm -rf squirtle
+      rm -rf squirtle
     command: |
       cd client
       npm run start

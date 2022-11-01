@@ -1,6 +1,5 @@
 import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
-import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
-import { Select, Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
+import { Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
 
 const runLogin = async () => {
   let env: any = await getEnv()
@@ -156,15 +155,15 @@ const runPull = async () => {
   await run4.status()
 }
 
-const runPlay = async (argv: any) => {
+const runPlay = () => {
   console.log('Play command intentionally left empty for now...');
 }
 
-const runCheck = async (argv: any) => {
+const runCheck = () => {
   console.log('Check command intentionally left empty for now...');
 }
 
-const runSubmit = async (argv: any) => {
+const runSubmit = () => {
   console.log('Submit command intentionally left empty for now...');
 }
 
