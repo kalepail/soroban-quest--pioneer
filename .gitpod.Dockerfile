@@ -6,6 +6,9 @@ RUN curl -L https://github.com/mozilla/sccache/releases/download/v0.3.0/sccache-
 RUN chmod +x ~/.local/bin/sccache
 RUN curl -L https://github.com/watchexec/cargo-watch/releases/download/v8.1.2/cargo-watch-v8.1.2-x86_64-unknown-linux-gnu.tar.xz | tar xJ --strip-components 1 -C ~/.local/bin cargo-watch-v8.1.2-x86_64-unknown-linux-gnu/cargo-watch
 
+RUN curl -LO https://github.com/denoland/deno/releases/download/v1.26.2/deno-x86_64-unknown-linux-gnu.zip
+RUN unzip deno-x86_64-unknown-linux-gnu.zip -d ~/.local/bin
+
 ENV RUSTC_WRAPPER=sccache
 ENV SCCACHE_CACHE_SIZE=5G
 ENV SCCACHE_DIR=/workspace/.sccache

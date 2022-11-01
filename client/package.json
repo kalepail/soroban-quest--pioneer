@@ -1,0 +1,12 @@
+{
+    "private": true,
+    "scripts": {
+      "start": "deno run --allow-net --allow-read --allow-run --watch webserver.ts",
+      "build": "deno bundle webserver.ts | esbuild --minify > webserver.bundle.js",
+      "serve": "deno run --allow-net --allow-read --allow-run webserver.bundle.js"
+    },
+    "devDependencies": {
+      "esbuild": "^0.15.12"
+    }
+  }
+  
