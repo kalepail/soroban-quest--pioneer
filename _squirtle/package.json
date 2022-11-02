@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "scripts": {
+    "compile": "deno compile --allow-env --allow-read --allow-run --allow-net --unstable --output sq --target x86_64-unknown-linux-gnu mod.ts",
+    "bin": "mv sq ~/.local/bin/",
+    "package": "npm run compile && npm run bin"
+  }
+}

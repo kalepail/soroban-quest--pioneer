@@ -84,3 +84,4 @@ contracts outside of the sandbox.
 [cargo]: https://doc.rust-lang.org/cargo/
 [vscode]: https://code.visualstudio.com/
 [soroban-cli]: https://github.com/stellar/soroban-cli
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-pioneer-quest)

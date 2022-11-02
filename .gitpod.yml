@@ -2,6 +2,16 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
+  - name: "Albedo Signer"
+    init: |
+      cd _squirtle
+      npm run compile
+    command: |
+      cd _squirtle
+      npm run bin
+      cd ../_client
+      clear
+      npm run start
   - name: Futurenet
     init: | 
       docker pull stellar/quickstart:soroban-dev
@@ -14,18 +24,18 @@ tasks:
       --enable-soroban-rpc
   - name: CLI – Futurenet
     env:
-      # This might should be set by the user. Also needs to actually exist as a funded account on the futurenet
+      # This might should be set by the user. Also needs to be actually exist as a funded account on the futurenet
       SOROBAN_SECRET_KEY: SDUOO3L7CNFXNNWSRSUCEJDKY5CLBZRI23UF6ZNXD23W5NGKJWVMGR7O
       SOROBAN_RPC_URL: "http://localhost:8000/soroban/rpc"
       SOROBAN_NETWORK_PASSPHRASE: "Test SDF Future Network ; October 2022"
     command: |
       clear
   - name: CLI – Sandbox
-    # before: |
-    #   gp open README.md
-    # init: |
-    #   cargo fetch
-    #   make build test
+    init: |
+      cargo clean
+      cargo fetch
+      make build
+      cargo test -p soroban-hello-world-contract
     command: |
       gp open README.md
       clear
@@ -48,6 +58,10 @@ github:
 ports:
   - name: Horizon + RPC endpoint
     port: 8000
+    visibility: public
+    onOpen: ignore
+  - name: Stellar Quest
+    port: 3000
     visibility: public
     onOpen: ignore
   - port: 4226
