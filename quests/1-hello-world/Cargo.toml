@@ -18,16 +18,9 @@ publish = false
 [lib]
 # The type of library crate we are creating.
 # - cdylib: A dynamic system library, to be loaded from another language.
-# - rlib: An intermediate, static Rust library.
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 # Documentation examples won't be tested by `cargo test`
 doctest = false
-
-# The "features" section defines a named set of features that will be included
-# at compile time. In this case, the `testutils` feature, will also enable the
-# `soroban-sdk/testutils` feature.
-[features]
-testutils = ["soroban-sdk/testutils"]
 
 # The "dependencies" section specifies the names and versions that our package
 # will require.

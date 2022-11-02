@@ -1,5 +1,5 @@
 # Our customized docker image uses Gitpod's "workspace-full" image as a base.
-FROM gitpod/workspace-full:2022-10-17-21-33-26
+FROM gitpod/workspace-full:2022-10-30-18-48-35
 
 # These "RUN" shell commands are run on top of the "workspace-full" image, and
 # then committed as a new image which will be used for the next steps.
@@ -8,12 +8,15 @@ FROM gitpod/workspace-full:2022-10-17-21-33-26
 # - sccache: a compiler cache that avoids running compiling tasks when possible
 # - cargo-hack: a cargo subcommand with useful options for testing and such
 # - cargo-watch: a tool to watch your project and run commands when files change
+# - deno: a JavaScript runtime built in Rust (we use this for the SQ cli)
 RUN mkdir -p ~/.local/bin
 RUN curl -L https://github.com/stellar/soroban-cli/releases/download/v0.1.2/soroban-cli-0.1.2-x86_64-unknown-linux-gnu.tar.gz | tar xz -C ~/.local/bin soroban
 RUN curl -L https://github.com/mozilla/sccache/releases/download/v0.3.0/sccache-v0.3.0-x86_64-unknown-linux-musl.tar.gz | tar xz --strip-components 1 -C ~/.local/bin sccache-v0.3.0-x86_64-unknown-linux-musl/sccache
 RUN chmod +x ~/.local/bin/sccache
-RUN curl -L https://github.com/taiki-e/cargo-hack/releases/download/v0.5.21/cargo-hack-x86_64-unknown-linux-gnu.tar.gz | tar xz -C ~/.local/bin cargo-hack
 RUN curl -L https://github.com/watchexec/cargo-watch/releases/download/v8.1.2/cargo-watch-v8.1.2-x86_64-unknown-linux-gnu.tar.xz | tar xJ --strip-components 1 -C ~/.local/bin cargo-watch-v8.1.2-x86_64-unknown-linux-gnu/cargo-watch
+
+RUN curl -LO https://github.com/denoland/deno/releases/download/v1.26.2/deno-x86_64-unknown-linux-gnu.zip
+RUN unzip deno-x86_64-unknown-linux-gnu.zip -d ~/.local/bin
 
 # These "ENV" instructions set environment variables that will be in the
 # environment for all subsequent instructions in the build stage.

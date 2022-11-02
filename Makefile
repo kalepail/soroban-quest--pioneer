@@ -12,12 +12,12 @@ all: build test
 # The `hack --feature-powerset` is useful to check that every combination of
 # features is working properly.
 test: build
-	cargo hack --feature-powerset test
+	cargo test
 
 # The `make build` rule will invoke `cargo build` with our WebAssemply target
 # and our release profile defined in our `/Cargo.toml` file.
 build:
-	cargo hack build --target wasm32-unknown-unknown --release
+	cargo build --target wasm32-unknown-unknown --release
 
 # The `make watch` rule will use the cargo-watch subcommand to watch for any
 # file changes, re-invoking the default `make` rule when changes are detected.
