@@ -1,6 +1,9 @@
+# We specify that we'll pull in our cutom Docker setup from this file.
 image:
   file: .gitpod.Dockerfile
 
+# These are the tasks that are run during the Gitpod setup. Each of the tasks
+# included will open its own terminal window where it can run.
 tasks:
   - name: "Albedo Signer"
     init: |
@@ -12,9 +15,13 @@ tasks:
       cd ../_client
       clear
       npm run start
+  # This "Futurenet" task starts up a Stellar validator node and joins it to the
+  # futurenet for you.
   - name: Futurenet
-    init: | 
+    # During the "init" phase, docker will download the quickstart image.
+    init: |
       docker pull stellar/quickstart:soroban-dev
+    # We enable a local JSON-RPC endpoint that will listen on port 8000.
     command: |
       docker run --rm -it \
       --name stellar \
@@ -22,29 +29,42 @@ tasks:
       stellar/quickstart:soroban-dev \
       --futurenet \
       --enable-soroban-rpc
-  - name: CLI – Futurenet
+  # This "CLI - Futurenet" task opens a terminal for you to interact with the
+  # futurenet network.
+  - name: CLI - Futurenet
+    # We specify some required environment variables for use on the futurenet.
     env:
-      # This might should be set by the user. Also needs to be actually exist as a funded account on the futurenet
+      # This might should be set by the user.
+      # This account must actually exist as a funded account on the futurenet.
       SOROBAN_SECRET_KEY: SDUOO3L7CNFXNNWSRSUCEJDKY5CLBZRI23UF6ZNXD23W5NGKJWVMGR7O
       SOROBAN_RPC_URL: "http://localhost:8000/soroban/rpc"
       SOROBAN_NETWORK_PASSPHRASE: "Test SDF Future Network ; October 2022"
+    # To keep things tidy, we clear the terminal from the previous output.
     command: |
       clear
-  - name: CLI – Sandbox
+  # This "CLI - Sandbox" task provides a place to run contracts in a local
+  # sandbox environment. We need to invoke `cargo fetch` several times /shrug.
+  - name: CLI - Sandbox
     init: |
       cargo clean
       cargo fetch
       make build
       cargo test -p soroban-hello-world-contract
+    # We open the `README.md` file and then clear the terminal output.
     command: |
       gp open README.md
       clear
 
+# We can even specify which VS Code extensions should be installed in your
+# Gitpod at startup. Wild!
 vscode:
   extensions:
     - vadimcn.vscode-lldb
     - matklad.rust-analyzer
 
+# We have our Gitpod's "prebuild" continuously built so you can always have the
+# freshest experience possible. I bet you can guess what most of these options
+# do, so we won't dwell here.
 github:
   prebuilds:
     master: true
@@ -55,15 +75,21 @@ github:
     addComment: false
     addBadge: true
 
+# We have a couple ports open in your Gitpod workspace to facilitate the quest
+# functionality we need.
 ports:
+  # Your quickstart node has a Horizon API server and an RPC endpoint, both
+  # listening on port 8000. It's publicly accessible through the internet.
   - name: Horizon + RPC endpoint
     port: 8000
     visibility: public
     onOpen: ignore
+  # This port is open to facilitate interactions using our SQ cli.
   - name: Stellar Quest
     port: 3000
     visibility: public
     onOpen: ignore
+  # This port is open for "Something with cargo test I think"??
   - port: 4226
     visibility: private
     onOpen: ignore

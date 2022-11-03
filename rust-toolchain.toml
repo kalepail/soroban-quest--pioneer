@@ -1,4 +1,21 @@
+# This file specifies how we want our Rust code to be compiled and run in our
+# development environment. This "toolchain" is a single installation of the Rust
+# compiler, and we can configure it to suit our needs with this file.
 [toolchain]
+
+# Here we specify the Rust release-channel we want to use, "stable" in our case
 channel = "stable"
+
+# Here we specify what platform we want our code to run on. We're writing smart
+# contracts for "WebAssembly" (shortened to WASM), so we specify that target
 targets = ["wasm32-unknown-unknown"]
+
+# You can think of "components" kind of like "modules" that we can include in
+# our Rust "toolchain" that perform different tasks. The components we've
+# specified here are:
+# - rustc: The Rust compiler and Rustdoc (a documenation generator)
+# - cargo: A package manager and build tool
+# - rustfmt: An automatic code formatter
+# - clippy: A lint tool to fix common mistakes and enforce stylistic choices
+# - rust-src: A local copy of the Rust standard libary
 components = ["rustc", "cargo", "rustfmt", "clippy", "rust-src"]

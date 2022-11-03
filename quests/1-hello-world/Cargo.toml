@@ -1,17 +1,33 @@
+# This file serves as a manifest that describes how our "1-hello-world" package
+# is organized, how it should function, dependencies, and other metadata.
+
+# The "package" section defines metadata characteristics about our package.
 [package]
 name = "soroban-hello-world-contract"
 version = "0.0.0"
 authors = ["Stellar Development Foundation <info@stellar.org>"]
 license = "Apache-2.0"
+# An "edition" is Rust's way of introducing backwards-incompatible changes to
+# the language. Here, we are using the latest edition.
 edition = "2021"
+# This prevents our package from being published to a crate registry by mistake.
 publish = false
 
+# The "lib" section compiles our package as a library, which can be linked by
+# other libraries and executables.
 [lib]
+# The type of library crate we are creating.
+# - cdylib: A dynamic system library, to be loaded from another language.
 crate-type = ["cdylib"]
+# Documentation examples won't be tested by `cargo test`
 doctest = false
 
+# The "dependencies" section specifies the names and versions that our package
+# will require.
 [dependencies]
 soroban-sdk = "0.1.0"
 
-[dev_dependencies]
+# The "dev-dependencies" are not used when compiling a package for building, but
+# are used for compiling tests, examples, and benchmarks.
+[dev-dependencies]
 soroban-sdk = { version = "0.1.0", features = ["testutils"] }
