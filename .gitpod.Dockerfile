@@ -1,5 +1,5 @@
 # Our customized docker image uses Gitpod's "workspace-full" image as a base.
-FROM gitpod/workspace-full:2022-10-30-18-48-35
+FROM gitpod/workspace-full:2022-11-04-17-43-13
 
 # These "RUN" shell commands are run on top of the "workspace-full" image, and
 # then committed as a new image which will be used for the next steps.

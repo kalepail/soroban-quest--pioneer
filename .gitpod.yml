@@ -60,7 +60,7 @@ tasks:
 vscode:
   extensions:
     - vadimcn.vscode-lldb
-    - matklad.rust-analyzer
+    - rust-lang.rust-analyzer
 
 # We have our Gitpod's "prebuild" continuously built so you can always have the
 # freshest experience possible. I bet you can guess what most of these options
