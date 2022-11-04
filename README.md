@@ -98,6 +98,38 @@ Options:
       --version  Show version number                                   [boolean]
 ```
 
+## Getting New Quests
+
+We're confident you'll be able to figure out how to use `sq` on your own, but
+there *is* one part that deserves some extra attention: the mechanics around
+getting a new quest when it becomes available. When we release a new quest,
+there are two ways you can pull in the new information: the "easy" `sq` way, or
+the "hard" `git` way.
+
+### The Easy Way
+
+All you'll need to do is run `sq pull` from within any of the bash shells in the
+workspace, and it will pull in all the new information for you. The CLI will
+attempt to save any changes you've made to the directory, as well.
+
+### The Hard Way
+
+If you're a `git` pro, this might be right up your alley. Essentially, what you
+need to do is fetch from the origin and incorporate the changes within the
+`quests/` directory into your working tree. If you want to use the same sequence
+of git commands that the SQ CLI uses, here's what it does:
+
+```bash
+git stash
+git fetch --all
+git checkout origin/main --theirs /workspace/soroban-quest/quests/
+git stash pop
+```
+
+There may be some conflict cleanup required, depending on the current state of
+your working tree when you run those commands. You could also skip the `stash`
+steps if you don't care to save existing changes within the `quests/` directory.
+
 # Rust Environment
 
 Crucially toward the goal of writing smart contracts for Soroban, your workspace
