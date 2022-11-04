@@ -1,4 +1,5 @@
 # Soroban Pioneer Quest <!-- omit in toc -->
+![Stellar-Quest-email](https://user-images.githubusercontent.com/4383610/200077219-de8e1f20-9878-4705-bec6-ced9a3904694.jpg)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-pioneer-quest)
 
