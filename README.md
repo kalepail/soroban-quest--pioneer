@@ -1,6 +1,23 @@
-# Soroban Pioneer Quest
+# Soroban Pioneer Quest <!-- omit in toc -->
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-pioneer-quest)
+
+# Table of Contents <!-- omit in toc -->
+
+- [Welcome!](#welcome)
+- [Gitpod](#gitpod)
+  - [VS Code](#vs-code)
+  - [Docker Container'd](#docker-containerd)
+  - [Gitpod CLI](#gitpod-cli)
+- [Stellar Quest CLI](#stellar-quest-cli)
+  - [Getting New Quests](#getting-new-quests)
+    - [The Easy Way](#the-easy-way)
+    - [The Hard Way](#the-hard-way)
+- [Rust Environment](#rust-environment)
+  - [Check out the Makefile](#check-out-the-makefile)
+- [Soroban CLI](#soroban-cli)
+- [Futurenet](#futurenet)
+- [Good Luck!](#good-luck)
 
 # Welcome!
 
