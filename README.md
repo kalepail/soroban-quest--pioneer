@@ -19,8 +19,8 @@ things you should know about Gitpod:
 
 Gitpod is built around a fully-functional copy of the VS Code IDE. Entirely in
 your browser! All the things you can do in the local version of VS Code, you can
-do here. Any extension you have in your local copy, you can install it here. You
-get the idea.
+do here. Just about ny extension you have in your local copy, you can install it
+here. You get the idea.
 
 ## Docker Container'd
 
@@ -37,12 +37,56 @@ Gitpod has its very own CLI that you can use to manage a running Gitpod
 workspace. It's got loads of useful features, and tons of ways you can use it.
 Preat neat, huh!? You can [learn all about it here][gp-cli]!
 
+# Stellar Quest CLI
+
+Would you belive that we've made, specifically for our Soroban Quest, a Stellar
+Quest CLI?! No joke! It's *super awesome*, and **absolutely essential** for you
+to understand, if you want to succeed in this live series. It's (awesomely)
+called "squirtle" but you'll become more familiar with invoking it as `sq`. The
+code for it lives in the `_squirtle/` directory, but you won't need to bother
+with anything in there.
+
+It exists as a command line tool that can connect your Gitpod instance with our
+existing SQ infrastructure. You can use it to:
+
+- login to your Stellar Quest account using discord (or logout),
+- get information about the currently logged in user,
+- visit the Stellar Quest website,
+- fetch new quests when they become available,
+- generate a keypair to play a particular quest,
+- check and/or verify the quests you've completed,
+- get rewards from completing a quest successfully
+
+You can invoke `sq` from within any of the bash shells in this Gitpod workspace.
+The output of `sq --help` is shown below, for your convenience. You can also
+invoke `sq <command> --help` to get more information on how to use a particular
+command.
+
+```
+gitpod /workspace/soroban-pioneer-quest (main) $ sq --help
+sq <command>
+
+Commands:
+  sq login   Connect your Stellar Quest account to Gitpod
+  sq logout  Disconnect your Stellar Quest account from Gitpod
+  sq user    Print out information about yourself                  [aliases: me]
+  sq open    Open the Stellar Quest website
+  sq pull    Pull any new or missing Quests into the /quests directory
+  sq play    Generate a Quest Keypair to play a Quest           [aliases: quest]
+  sq check   Check your Quest answer                           [aliases: verify]
+  sq submit  Submit a signed reward XDR to the Stellar Quest backend
+
+Options:
+  -h, --help     Show help                                             [boolean]
+      --version  Show version number                                   [boolean]
+```
+
 # Rust Environment
 
-Most crucially toward the goal of writing smart contracts for Soroban, your
-workspace contains a fully configured, ready to go Rust development environment.
-We have all the tooling, compilers, build processes, and anything else you'll
-need to hit the ground running. This includes:
+Crucially toward the goal of writing smart contracts for Soroban, your workspace
+contains a fully configured, ready to go Rust development environment. We have
+all the tooling, compilers, build processes, and anything else you'll need to
+hit the ground running. This includes:
 
 - An up-to-date version of the [Rust][rust] programming language
 - This pre-configured [VS Code][vscode] editor, with the required extensions
@@ -79,9 +123,16 @@ to make contracts!
 This will come in very handy when you are ready to deploy and share your
 contracts outside of the sandbox.
 
+# Good Luck!
+
+Now that you're (at least somewhat) familiar with the lay of the land, you're
+ready to get questing! Open up that Gitpod, and get to work! Most importantly,
+have fun!!
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-pioneer-quest)
+
 [gp-cli]: https://www.gitpod.io/docs/references/gitpod-cli
 [rust]: https://www.rust-lang.org/
 [cargo]: https://doc.rust-lang.org/cargo/
 [vscode]: https://code.visualstudio.com/
 [soroban-cli]: https://github.com/stellar/soroban-cli
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-pioneer-quest)
