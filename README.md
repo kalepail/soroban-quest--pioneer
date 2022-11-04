@@ -122,7 +122,7 @@ of git commands that the SQ CLI uses, here's what it does:
 ```bash
 git stash
 git fetch --all
-git checkout origin/main --theirs /workspace/soroban-quest/quests/
+git checkout origin/main --theirs /workspace/<the-workspace-name>/quests/
 git stash pop
 ```
 
