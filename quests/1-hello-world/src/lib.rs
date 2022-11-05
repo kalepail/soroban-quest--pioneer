@@ -5,8 +5,8 @@
 
 // From our Soroban SDK, we import the following macros:
 // - contractimpl: exports the public functions defined in the implementation
-// - symbol: creates a Symbol with the given string
-// - vec: creates a Vec with the given items
+// - symbol: creates a `Symbol` with the given string
+// - vec: creates a `Vec` with the given items
 // We also import the following types from the SDK:
 // - Env: provides access to the environment the contract is executing within
 // - Symbol: represents strings up to 10 characters long (a-zA-Z0-0_)
