@@ -1,4 +1,4 @@
-# Quest 1 - Hello World
+# Pioneer Quest - Hello World
 
 This is the directory containing your actual quest that will need to be
 completed. In this pioneer quest repo's version of this directory, you will find
