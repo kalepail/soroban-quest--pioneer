@@ -15,7 +15,7 @@ it's time to quest, this will be where you want to start.
 
 Did you know we also have a gripping, interesting, and captivating narrative to
 go along with the Soroban quest!? Each quest will be accompanied by a fresh
-episode of Bee's hunt for the golden abacus!
+episode of Bee's hunt for the golden soroban!
 
 ## Commented Examples
 
