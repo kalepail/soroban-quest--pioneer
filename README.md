@@ -145,7 +145,7 @@ hit the ground running. This includes:
 
 You have enough pre-installed to write, debug, test, build, and deploy Soroban
 smart contracts from right within this Gitpod workspace. We even have an example
-contract ready for you to look through in the `quests/1-hello-world/` directory.
+contract ready for you to look through in the `quests/0-hello-world/` directory.
 
 ## Check out the Makefile
 

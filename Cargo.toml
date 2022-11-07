@@ -1,7 +1,7 @@
 # This file serves as a manifest that describes how our project is organized,
 # how it should function, dependencies, and other metadata.
 # Each of the quests also has its own Cargo.toml file, with more information.
-# Check one out at ./quests/1-hello-world/Cargo.toml.
+# Check one out at ./quests/0-hello-world/Cargo.toml.
 
 # A workspace is a collection of different Rust packages that are managed
 # together, using the same commands, configuration, etc.
@@ -10,7 +10,7 @@
 resolver = "2"
 # Our workspace members include the packages in the quests directory.
 members = [
-    "quests/1-hello-world"
+    "quests/0-hello-world"
 ]
 
 # Here we specify our compiler settings as a "profile" that we specify when we

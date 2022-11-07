@@ -1,4 +1,4 @@
-# This file serves as a manifest that describes how our "1-hello-world" package
+# This file serves as a manifest that describes how our "0-hello-world" package
 # is organized, how it should function, dependencies, and other metadata.
 
 # The "package" section defines metadata characteristics about our package.
