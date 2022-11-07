@@ -12,17 +12,17 @@ dangers aplenty await us in Squaktahune Temple, and it is best to be prepared!"
 Roscoe stepped into the tent and proceeded to sprawl out in a nearby chair. "I
 suppose it's prudent for one of us to be prepared for this quest," he said,
 running a hand through his mop of hair (give him a break, a good barber was hard
-to find in the Jordanian desert). "Why are we even seeking this Golden Abacus,
+to find in the Jordanian desert). "Why are we even seeking this Golden Soroban,
 anyway?"
 
-Bee glared pointedly at Roscoe. "You know why. The Golden Abacus, in the wrong
+Bee glared pointedly at Roscoe. "You know why. The Golden Soroban, in the wrong
 hands, will doom society for eternity. We are doing this for the good of
 humankind."
 
 "Oh, is that all," said Roscoe. "Let's get on with it then!" He stood up with a
 flourish and lept from the tent.
 
-Bee sighed. Yes, many challenges stood in their way, but once the Golden Abacus
+Bee sighed. Yes, many challenges stood in their way, but once the Golden Soroban
 was in their hands, they would be able to use it for so many wonderful things.
 Bee tightened the laces on her boots and swung her pack onto her shoulders
 before marching out into the thick, windswept sand. Roscoe fell into step beside
@@ -32,4 +32,4 @@ Bee raised her eyebrow as Roscoe chuckled. "Just the essentials," he said with a
 wink.
 
 With these essentials in tow, Blossom Bernice Breydenblach and Roscoe hiked
-toward Squaktahune Temple, the Golden Abacus, and adventure.
+toward Squaktahune Temple, the Golden Soroban, and adventure.
