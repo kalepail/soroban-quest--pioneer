@@ -7,6 +7,11 @@ image:
 tasks:
   - name: "Albedo Signer"
     init: |
+      git remote add base https://github.com/tyvdh/soroban-quest.git
+      git fetch --all
+      git checkout base/main --theirs _client
+      git checkout base/main --theirs _squirtle
+      git reset HEAD -- .
       cd _squirtle
       npm run compile
     command: |
