@@ -19,7 +19,8 @@ RUN curl -LO https://github.com/denoland/deno/releases/download/v1.26.2/deno-x86
 RUN unzip deno-x86_64-unknown-linux-gnu.zip -d ~/.local/bin
 
 RUN git clone https://github.com/tyvdh/soroban-quest.git ~/.local/_tmp/soroban-quest && \
-    mv ~/.local/_tmp/soroban-quest/_client ~/.local/soroban-quest/_client && \
+    mkdir -p ~/.local/soroban-quest && \
+    mv ~/.local/_tmp/soroban-quest/_client ~/.local/soroban-quest && \
     cd ~/.local/_tmp/soroban-quest/_squirtle && \
     npm run package && \
     cd ~/.local && \
