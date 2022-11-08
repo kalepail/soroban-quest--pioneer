@@ -18,6 +18,10 @@ RUN curl -L https://github.com/watchexec/cargo-watch/releases/download/v8.1.2/ca
 RUN curl -LO https://github.com/denoland/deno/releases/download/v1.26.2/deno-x86_64-unknown-linux-gnu.zip
 RUN unzip deno-x86_64-unknown-linux-gnu.zip -d ~/.local/bin
 
+RUN git clone https://github.com/tyvdh/soroban-quest.git ~/.local/soroban-quest && \
+    cd ~/.local/soroban-quest/_squirtle && \
+    npm run package
+
 # These "ENV" instructions set environment variables that will be in the
 # environment for all subsequent instructions in the build stage.
 ENV RUSTC_WRAPPER=sccache
