@@ -75,12 +75,12 @@ github:
 ports:
   # Your quickstart node has a Horizon API server and an RPC endpoint, both
   # listening on port 8000. It's publicly accessible through the internet.
-  - name: Horizon + RPC endpoint
+  - name: Futurenet
     port: 8000
     visibility: public
     onOpen: ignore
   # This port is open to facilitate interactions using our SQ cli.
-  - name: Stellar Quest
+  - name: Albedo Signer
     port: 3000
     visibility: public
     onOpen: ignore
