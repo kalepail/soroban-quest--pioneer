@@ -23,8 +23,7 @@ const runLogin = async () => {
       cmd: ['gp', 'url', '3000'],
       stdout: 'piped'
     })
-    const output = await run1.output()
-    const gitpodUrl = new URL(new TextDecoder().decode(output))
+    const gitpodUrl = new URL(new TextDecoder().decode(await run1.output()).trim())
     const discordUrl = new URL('https://discord.com/api/oauth2/authorize')
     discordUrl.searchParams.append('client_id', isDev ? '1024724391759724627' : '775714192161243161');
     discordUrl.searchParams.append('redirect_uri', `${apiUrl}/hooks/discord/code`);
@@ -145,10 +144,11 @@ const runPull = async () => {
     cmd: ['pwd'],
     stdout: 'piped'
   })
-  const output = await run0.output()
-  const workingDir = new TextDecoder().decode(output)
+  const workingDir = new TextDecoder().decode(await run0.output()).trim()
   const [root, directory, workspace] = workingDir.split('/')
   const questDirectory = [root, directory, workspace].join('/') + '/quests/'
+
+  console.log(questDirectory);
 
   const run1 = Deno.run({
     cmd: ['git', 'stash',],
@@ -305,8 +305,7 @@ const runCheck = async (argv: any) => {
       cmd: ['gp', 'url', '3000'],
       stdout: 'piped'
     })
-    const output = await run4.output()
-    const gitpodUrl = new URL(new TextDecoder().decode(output))
+    const gitpodUrl = new URL(new TextDecoder().decode(await run4.output()).trim())
     gitpodUrl.searchParams.append('xdr', xdr)
     gitpodUrl.searchParams.append('pubkey', key)
     gitpodUrl.searchParams.append('network', network.toLowerCase())
