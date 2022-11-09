@@ -1,0 +1,388 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Albedo Signer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Inter&family=Play:wght@700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/the-new-css-reset@1.7.3/css/reset.css">
+  <script defer src="https://unpkg.com/@albedo-link/intent/lib/albedo.intent.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+
+    body {
+      background: url('https://quest.stellar.org/assets/imgs/stars-bg.svg') top left repeat;
+      background-color: #010323;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: white;
+      font-size: 16px;
+      padding-top: calc(160px / 2);
+    }
+
+    .modal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #19193E;
+      width: 100%;
+      max-width: 730px;
+      border-bottom: 16px solid #23234E;
+      padding: 0 50px;
+      position: relative;
+    }
+    .left,
+    .right {
+      position: absolute;
+      top: 0;
+    }
+    .left {
+      left: 0;
+    }
+    .right {
+      right: 0;
+    }
+
+    .nft {
+      image-rendering: optimizeSpeed;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      height: 160px;
+      margin-top: calc(-160px / 2);
+      margin-bottom: 12px;
+    }
+    .desc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .success {
+      color: #49FDA6;
+    }
+    .reward {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .reward span {
+      color: #07FFEE;
+      margin: 0 4px 0 10px;
+    }
+    h1 {
+      font-size: 32px;
+      font-family: 'Play', sans-serif;
+      margin-bottom: 16px;
+    }
+    p {
+      margin-bottom: 16px;
+      font-size: 16px;
+    }
+    img {
+      display: block;
+    }
+
+    .error {
+      background-color: #23234E;
+      padding: 32px;
+      border-top: 12px solid #EC5454;
+      width: 100%;
+      position: relative;
+    }
+    .error .left,
+    .error .right {
+      /* height: 12px; */
+      top: -12px;
+    }
+    .error h1 {
+      color: #EC5454;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    .error p {
+      font-size: 14px;
+    }
+    pre {
+      color: white;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      background-color: #010323;
+      padding: 24px;
+      white-space: pre-wrap;
+      margin-bottom: 16px;
+      overflow: scroll;
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .actions p {
+      margin-bottom: 0;
+    }
+    .actions a {
+      color: #777EED;
+    }
+    .actions a:hover {
+      text-decoration: underline;
+    }
+    .actions button {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .actions img {
+      margin-right: 10px;
+    }
+
+    .sign,
+    .view {
+      background-color: #07FFEE;
+      font-family: 'Play', sans-serif;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      color: black;
+      margin-top: 24px;
+      margin-bottom: calc(50px - 16px);
+      cursor: pointer;
+    }
+    .view {
+      background-color: #49FDA6;
+      margin-bottom: 16px;
+    }
+    .close {
+      margin-bottom: calc(50px - 16px);
+      cursor: pointer;
+    }
+    .close:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <script>
+    async function albedoOpen(e, _claimToken, _xdr) {
+      this.error = null
+      this.loading = 1
+
+      const xdr = _xdr || this.xdr
+      const claimToken = _claimToken || this.CLAIM_TOKEN
+      
+      try {
+        await albedo.tx({
+          xdr,
+          pubkey: this.pubkey,
+          network: this.network,
+          description: 'Claim your Stellar Quest reward'
+        })
+        .then(({ signed_envelope_xdr }) => {
+          this.loading = 2
+
+          return fetch(`${this.apiUrl}/prize/claim`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${claimToken}`
+            },
+            body: JSON.stringify({
+              innerTx: signed_envelope_xdr
+            })
+          })
+          .then(async (res) => {
+            if (res.ok)
+              return this.success = true
+            else
+              throw await res.json()
+          })
+        })
+        .catch(async (err) => {
+          let { claimToken } = err
+
+          if (claimToken) {
+            const { xdr } = JSON.parse(
+              atob(
+                claimToken.split('.')[1]
+              )
+            )
+            
+            return albedoOpen(null, claimToken, xdr)
+          }
+
+          else
+            throw err 
+        })
+      } catch(err) {
+        this.error = err
+      } finally {
+        this.loading = 0
+      }
+    }
+
+    function getEnv() {
+      return fetch('/env')
+      .then((res) => {
+        if (res.ok)
+          return res.json()
+        else
+          throw res
+      })
+      .catch((err) => console.error(err))
+    }
+
+    function copyError() {
+      try {
+        navigator.clipboard.writeText(JSON.stringify(this.error, null, 2));
+
+        this.$refs['copy-error-text'].innerText = '✔︎ Copied'
+        setTimeout(() => this.$refs['copy-error-text'].innerText = 'Copy Error', 2000)
+      } catch {}
+    }
+
+    function closeWindow(){
+      return window.close()
+    }
+
+    document.addEventListener("alpine:init", () => {
+      const url = new URL(location.href)
+      const xdr = url.searchParams.get('xdr')
+      const pubkey = url.searchParams.get('pubkey')
+      const network = url.searchParams.get('network')
+
+      Alpine.data("data", () => ({
+        url,
+        xdr,
+        pubkey,
+        network,
+
+        CLAIM_TOKEN: null,
+        ENV: null,
+
+        isDev: null,
+        apiUrl: null,
+        
+        amount: 0,
+        badge: null,
+        badgeUrl: null,
+        profileUrl: null,
+        error: null,
+        loading: 0,
+        success: false,
+        init: async function() {
+          await getEnv().then(({ CLAIM_TOKEN, ENV }) => {
+            this.CLAIM_TOKEN = CLAIM_TOKEN
+            this.ENV = ENV
+          })
+          
+          this.isDev = this.ENV !== 'prod'
+          this.apiUrl = this.isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
+          this.siteUrl = this.isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
+
+          const { sub, amount, badge, network } = JSON.parse(
+            atob(
+              this.CLAIM_TOKEN.split('.')[1]
+            )
+          )
+
+          this.amount = amount ?? 0
+          this.badge = badge
+          this.badgeUrl = `${this.apiUrl}/badge/${this.badge}?v=4&network=${network.toLowerCase()}`
+          this.profileUrl = `${this.siteUrl}/profile/${sub}`
+        }
+      }));
+    });
+  </script>
+</head>
+
+<body x-data="data">
+  <h1 x-show="!xdr" x-cloak>Nothing to claim</h1>
+
+  <div class="modal" x-show="xdr" x-cloak>
+    <svg class="left" width="64" height="32" viewBox="0 0 64 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="16" fill="#010323"/>
+      <rect x="16" y="16" width="16" height="16" fill="#010323"/>
+      <rect x="32" width="16" height="16" fill="#010323"/>
+      <rect x="48" width="16" height="16" fill="#010323"/>
+    </svg>
+    
+    <svg class="right" width="80" height="32" viewBox="0 0 80 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="16" transform="matrix(-1 0 0 1 80 0)" fill="#010323"/>
+      <rect width="16" height="16" transform="matrix(-1 0 0 1 64 16)" fill="#010323"/>
+      <rect width="16" height="16" transform="matrix(-1 0 0 1 48 0)" fill="#010323"/>
+      <rect width="16" height="16" transform="matrix(-1 0 0 1 32 0)" fill="#010323"/>
+      <rect width="16" height="16" transform="matrix(-1 0 0 1 16 16)" fill="#010323"/>
+    </svg>      
+
+    <img class="nft" :src="badgeUrl">
+    <div x-show="amount" class="reward">
+      <img src="https://quest.stellar.org/assets/imgs/coin.svg">
+      <span x-text="amount"></span>
+      XLM
+    </div>
+
+    <div class="desc" x-show="success">
+      <h1 class="success">Success 🙌</h1>
+      <p>You have successfully claimed your badge<span x-show="amount"> and XLM</span>.</p>
+    </div>
+
+    <div class="desc" x-show="!success">
+      <h1>Claim your badge<span x-show="amount"> &amp; XLM</span>!</h1>
+      <p>In order to claim your badge you must sign this transaction with Albedo.</p>
+    </div>
+    
+    <div x-show="error" class="error">
+      <svg class="left" width="20" height="12" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="0" width="4" height="4" fill="#19193E"/>
+        <rect x="12" y="0" width="4" height="4" fill="#19193E"/>
+        <rect x="16" y="0" width="4" height="4" fill="#19193E"/>
+        <rect x="0" y="4" width="4" height="4" fill="#19193E"/>
+        <rect x="8" y="4" width="4" height="4" fill="#19193E"/>
+        <rect x="4" y="8" width="4" height="4" fill="#19193E"/>
+      </svg>
+      
+      <svg class="right" width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="4" height="4" fill="#19193E"/>
+        <rect x="8" y="0" width="4" height="4" fill="#19193E"/>
+        <rect x="12" y="0" width="4" height="4" fill="#19193E"/>
+        <rect x="4" y="4" width="4" height="4" fill="#19193E"/>
+        <rect x="12" y="4" width="4" height="4" fill="#19193E"/>
+        <rect x="8" y="8" width="4" height="4" fill="#19193E"/>
+      </svg>        
+
+      <h1>Error</h1>
+      <p x-text="error?.message"></p>
+      <pre x-text="JSON.stringify(error, null, 2)"></pre>
+
+      <div class="actions">
+        <p>Need help? <a href="https://quest.stellar.org/join" target="_blank">Join our Discord</a></p>
+        <button x-on:click="copyError">
+          <img src="https://quest.stellar.org/assets/imgs/copy.svg">
+          <span x-ref="copy-error-text">Copy Error</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="sign" x-on:click="albedoOpen" x-show="!success">
+      <span x-show="loading === 1">Signing...</span>
+      <span x-show="loading === 2">Submitting...</span>
+      <span x-show="!loading">Sign with Albedo</span>
+    </button>
+
+    <div class="desc" x-show="success">
+      <a class="view" :href="profileUrl">View Achievements</a>
+      <button class="close" x-on:click="closeWindow">Close</button>
+    </div>
+  </div>
+</body>
+</html>
