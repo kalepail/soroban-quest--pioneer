@@ -1,0 +1,9 @@
+function _sq_set_secret() {
+    if [[ -n "$COMP_LINE" ]]; then return; fi
+    if [[ -f /workspace/.sq-soroban-secret ]]
+    then
+        export SOROBAN_SECRET_KEY=$(</workspace/.sq-soroban-secret)
+    fi
+ }
+
+trap '_sq_set_secret' DEBUG

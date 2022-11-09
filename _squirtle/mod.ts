@@ -207,6 +207,8 @@ const runPlay = async (argv: any) => {
   // await run2.status()
   ////
 
+  const encoder = new TextEncoder()
+  await Deno.writeFile("/workspace/.sq-soroban-secret", encoder.encode(sk))
   console.log(`🔐 Quest Keypair for Stellar Quest Series 5 Quest ${argv.index}
 ------------------------------------------
 Public Key: ${pk}
@@ -216,8 +218,8 @@ Steps to use:
 ------------------------------------------
 1. Fund the ${pk} account (maybe with the Futurenet Friendbot?)
 2. Pass --secret-key=${sk} in Soroban calls to the Futurenet
-3. Sing and dance 🎶💃🪩`);
-  // ✅ SOROBAN_SECRET_KEY env variable has been updated`);
+3. Sing and dance 🎶💃🪩
+✅ If you're using bash (default) SOROBAN_SECRET_KEY env variable has been updated for you`);
 }
 
 const runFund = async (argv: any) => {
