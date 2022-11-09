@@ -6,8 +6,13 @@ image:
 # included will open its own terminal window where it can run.
 tasks:
   - name: "Albedo Signer"
+    init: |
+      cd _squirtle
+      npm run compile
     command: |
-      cd ~/.local/_client
+      cd _squirtle
+      npm run bin
+      cd ../_client
       clear
       npm run start
   # This "Futurenet" task starts up a Stellar validator node and joins it to the
