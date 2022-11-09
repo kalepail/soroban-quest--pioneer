@@ -2,7 +2,7 @@
 
 ![Stellar-Quest-email](https://user-images.githubusercontent.com/4383610/200077219-de8e1f20-9878-4705-bec6-ced9a3904694.jpg)
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-quest--pioneer)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=prod/https://github.com/tyvdh/soroban-quest--pioneer)
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -180,7 +180,7 @@ Now that you're (at least somewhat) familiar with the lay of the land, you're
 ready to get questing! Open up that Gitpod, and get to work! Most importantly,
 have fun!!
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=dev/https://github.com/tyvdh/soroban-quest--pioneer)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=prod/https://github.com/tyvdh/soroban-quest--pioneer)
 
 [gp-cli]: https://www.gitpod.io/docs/references/gitpod-cli
 [rust]: https://www.rust-lang.org/
