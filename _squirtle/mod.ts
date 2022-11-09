@@ -141,8 +141,13 @@ const runOpen = async () => {
 }
 
 const runPull = async () => {
-  const url = new URL(import.meta.url);
-  const [root, directory, workspace] = url.pathname.split('/')
+  const run0 = Deno.run({
+    cmd: ['pwd'],
+    stdout: 'piped'
+  })
+  const output = await run0.output()
+  const workingDir = new TextDecoder().decode(output)
+  const [root, directory, workspace] = workingDir.split('/')
   const questDirectory = [root, directory, workspace].join('/') + '/quests/'
 
   const run1 = Deno.run({
