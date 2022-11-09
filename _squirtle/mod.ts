@@ -188,29 +188,7 @@ const runPlay = async (argv: any) => {
     )
   )
 
-  // Vain attempt to load the sk into SOROBAN_SECRET_KEY automatically
-  // Needs to show up in the Futurenet terminal and not here
-  // Maybe pop it into a .dot file? Still problematic as you need to update the Futurenet bash exported variables
-  ////
-  // const run1 = Deno.run({
-  //   cmd: ['gp', 'env', `SOROBAN_SECRET_KEY=${sk}`],
-  //   stdout: 'null'
-  // })
-  // await run1.status()
-
-  // const run2 = Deno.run({
-  //   cmd: [
-  //     'echo',
-  //     '$SOROBAN_SECRET_KEY'
-  //   ],
-  //   env: {
-  //     ...Deno.env.toObject(),
-  //   //   'SOROBAN_SECRET_KEY': sk
-  //   },
-  //   // stdout: 'null'
-  // })
-  // await run2.status()
-  ////
+  await Deno.writeFile("/workspace/.soroban-secret-key", new TextEncoder().encode(sk))
 
   console.log(`🔐 Quest Keypair for Stellar Quest Series 5 Quest ${argv.index}
 ------------------------------------------
@@ -221,8 +199,8 @@ Steps to use:
 ------------------------------------------
 1. Fund the ${pk} account (maybe with the Futurenet Friendbot?)
 2. Pass --secret-key=${sk} in Soroban calls to the Futurenet
-3. Sing and dance 🎶💃🪩`);
-  // ✅ SOROBAN_SECRET_KEY env variable has been updated`);
+3. Sing and dance 🎶💃🪩
+✅ SOROBAN_SECRET_KEY env variable has been updated`);
 }
 
 const runFund = async (argv: any) => {
