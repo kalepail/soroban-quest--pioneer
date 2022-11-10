@@ -90,7 +90,7 @@ The output of `sq --help` is shown below, for your convenience. You can also
 invoke `sq <command> --help` to get more information on how to use a particular
 command.
 
-```
+```bash
 gitpod /workspace/soroban-quest--pioneer (main) $ sq --help
 sq <command>
 
