@@ -7,6 +7,7 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Welcome](#welcome)
+- [Video Walkthrough](#video-walkthrough)
 - [Gitpod](#gitpod)
   - [VS Code](#vs-code)
   - [Docker Container'd](#docker-containerd)
@@ -27,6 +28,16 @@ Welcome to the Pioneer Quest for our upcoming Soroban Quest! We are beyond
 excited you've joined us. These quests are going to be fun, exciting, and
 *interesting* to be sure! There's a lot to go through so you are up to speed,
 so let's jump in!
+
+## Video Walkthrough
+
+The rest of this README is quite heavily skewed toward written information.
+That's not everybody's primary way of learning, so we've created a video
+walkthrough you can check out, as well. It doesn't contain everything in this
+README, but it's a start. If that's more up your alley, you can watch the video
+right here!
+
+<!-- Insert Video URL -->
 
 ## Gitpod
 
