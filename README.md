@@ -7,7 +7,6 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Welcome](#welcome)
-- [Questing Schedule](#questing-schedule)
 - [Video Walkthrough](#video-walkthrough)
 - [Gitpod](#gitpod)
   - [VS Code](#vs-code)
@@ -32,21 +31,6 @@ Welcome to the Pioneer Quest for our upcoming Soroban Quest! We are beyond
 excited you've joined us. These quests are going to be fun, exciting, and
 *interesting* to be sure! There's a lot to go through so you are up to speed,
 so let's jump in!
-
-## Questing Schedule
-
-Soroban Quest (a.k.a. Stellar Quest Live, Series 5) will take place as 6 amazing
-quests, between (depending on your timezone) November 10 and December 2, 2022.
-Check out the schedule below to see more details and specifics.
-
-| Quest | Title            | Date and Time (UTC) |
-| ----- | ---------------- | ------------------- |
-| 01    | Hello World      | November 11, 2:00am |
-| 02    | Auth Storage     | November 14, 2:00pm |
-| 03    | Reverse Engineer | November 18, 2:00am |
-| 04    | Cross Contract   | November 21, 2:00pm |
-| 05    | Asset Interop    | November 28, 2:00pm |
-| 06    | dApple Sauce     | December 2, 2:00am  |
 
 ## Video Walkthrough
 
