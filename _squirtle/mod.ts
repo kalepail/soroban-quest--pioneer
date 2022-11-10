@@ -398,9 +398,9 @@ const getUser = (env: any) => {
     }
   })
     .then(handleResponse)
-    .catch((err) => {
+    .catch(async (err) => {
+      await runLogout(null, true)
       printErrorBreak(err)
-      return runLogout(null, true)
     })
 }
 
