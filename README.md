@@ -7,6 +7,7 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Welcome](#welcome)
+- [Video Walkthrough](#video-walkthrough)
 - [Gitpod](#gitpod)
   - [VS Code](#vs-code)
   - [Docker Container'd](#docker-containerd)
@@ -27,6 +28,16 @@ Welcome to the Pioneer Quest for our upcoming Soroban Quest! We are beyond
 excited you've joined us. These quests are going to be fun, exciting, and
 *interesting* to be sure! There's a lot to go through so you are up to speed,
 so let's jump in!
+
+## Video Walkthrough
+
+The rest of this README is quite heavily skewed toward written information.
+That's not everybody's primary way of learning, so we've created a video
+walkthrough you can check out, as well. It doesn't contain everything in this
+README, but it's a start. If that kind of content sounds like it's more up your
+alley, you can [watch the video right here][video]!
+
+[![Soroban Pioneer Quest Walkthrough][thumbnail]][video]
 
 ## Gitpod
 
@@ -81,8 +92,8 @@ The output of `sq --help` is shown below, for your convenience. You can also
 invoke `sq <command> --help` to get more information on how to use a particular
 command.
 
-```
-gitpod /workspace/soroban-quest--pioneer/_squirtle (main) $ sq --help
+```bash
+gitpod /workspace/soroban-quest--pioneer (main) $ sq --help
 sq
 
 Commands:
@@ -189,3 +200,5 @@ have fun!!
 [cargo]: https://doc.rust-lang.org/cargo/
 [vscode]: https://code.visualstudio.com/
 [soroban-cli]: https://github.com/stellar/soroban-cli
+[video]: https://youtu.be/6_tgpth6U5Y
+[thumbnail]: https://user-images.githubusercontent.com/2024293/201189898-dd9ae16e-698c-4b2d-b442-fec7d7222f3f.jpg
