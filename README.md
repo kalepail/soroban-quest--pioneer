@@ -202,5 +202,3 @@ have fun!!
 [soroban-cli]: https://github.com/stellar/soroban-cli
 [video]: https://youtu.be/6_tgpth6U5Y
 [thumbnail]: https://user-images.githubusercontent.com/2024293/201189898-dd9ae16e-698c-4b2d-b442-fec7d7222f3f.jpg
-
-test
