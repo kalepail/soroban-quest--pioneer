@@ -11,7 +11,7 @@ tasks:
       npm run compile
     command: |
       cd _squirtle
-      npm run bin
+      npm run package
       cd ../_client
       clear
       npm run start
