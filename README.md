@@ -49,7 +49,7 @@ things you should know about Gitpod:
 
 Gitpod is built around a fully-functional copy of the VS Code IDE. Entirely in
 your browser! All the things you can do in the local version of VS Code, you can
-do here. Just about ny extension you have in your local copy, you can install it
+do here. Just about any extension you have in your local copy you can install
 here. You get the idea.
 
 ### Docker Container'd
@@ -58,7 +58,7 @@ That's right, Gitpod is running on a Docker-ized container so that we can be
 certain *your* setup for these Soroban Quests is **exactly** the same as *our*
 setup! We have a few tasks configured to run on your Gitpod's startup. They're
 briefly explained below, but you can also read through `.gitpod.yml` and
-`.gitpod.Dockerfile` to get a sense of what is happening at what point during
+`.gitpod.Dockerfile` to get a sense of what is happening during
 the build process.
 
 ### Gitpod CLI
@@ -72,20 +72,20 @@ Preat neat, huh!? You can [learn all about it here][gp-cli]!
 Would you belive that we've made, specifically for our Soroban Quest, a Stellar
 Quest CLI?! No joke! It's *super awesome*, and **absolutely essential** for you
 to understand, if you want to succeed in this live series. It's (awesomely)
-called "squirtle" but you'll become more familiar with invoking it as `sq`. The
+called "Squirtle" but you'll become more familiar with invoking it as `sq`. The
 code for it lives in the `_squirtle/` directory, but you won't need to bother
 with anything in there.
 
-It exists as a command line tool that can connect your Gitpod instance with our
-existing SQ infrastructure. You can use it to:
+It exists as a command line tool that can connect your Gitpod instance with the SQ backend. You can use it to:
 
 - login to your Stellar Quest account using discord (or logout),
 - get information about the currently logged in user,
 - visit the Stellar Quest website,
 - fetch new quests when they become available,
 - generate a keypair to play a particular quest,
+- fund Quest Keypairs on the Futurenet,
 - check and/or verify the quests you've completed,
-- get rewards from completing a quest successfully
+- get rewards for completing quests successfully
 
 You can invoke `sq` from within any of the bash shells in this Gitpod workspace.
 The output of `sq --help` is shown below, for your convenience. You can also
@@ -94,22 +94,23 @@ command.
 
 ```bash
 gitpod /workspace/soroban-quest--pioneer (main) $ sq --help
-sq <command>
+sq
 
 Commands:
-  sq login   Connect your Stellar Quest account to Gitpod
-  sq logout  Disconnect your Stellar Quest account from Gitpod
-  sq user    Print out information about yourself                  [aliases: me]
-  sq open    Open the Stellar Quest website
-  sq pull    Pull any new or missing Quests into the /quests directory
-  sq play    Generate a Quest Keypair to play a Quest           [aliases: quest]
-  sq fund    Create and fund an account on the Futurenet
-  sq check   Check your Quest answer                           [aliases: verify]
-  sq submit  Submit a signed reward XDR to the Stellar Quest backend
+  sq login          Connect your Stellar Quest account to Gitpod
+  sq logout         Disconnect your Stellar Quest account from Gitpod
+  sq user           Print out information about yourself           [aliases: me]
+  sq open           Open the Stellar Quest website
+  sq pull           Pull any new or missing Quests into the /quests directory
+  sq play [index]   Generate a Quest Keypair to play a Quest
+  sq fund [key]     Create and fund an account on the Futurenet
+  sq check [index]  Check your Quest answer
+  sq submit [xdr]   Submit a signed reward XDR to the Stellar Quest backend
+  sq                                                                   [default]
 
 Options:
-  -h, --help     Show help                                             [boolean]
       --version  Show version number                                   [boolean]
+  -h, --help     Show help                                             [boolean]
 ```
 
 ### Getting New Quests
@@ -152,7 +153,7 @@ all the tooling, compilers, build processes, and anything else you'll need to
 hit the ground running. This includes:
 
 - An up-to-date version of the [Rust][rust] programming language
-- This pre-configured [VS Code][vscode] editor, with the required extensions
+- This pre-configured [VS Code][vscode] editor, with some essential extensions
 - The [Cargo][cargo] package manager for Rust crates
 - The `wasm32-unknown-unknown` target for compiling your contracts
 

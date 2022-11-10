@@ -71,12 +71,17 @@ const runLogin = async () => {
   await runUser(null, user, env)
 }
 
-const runLogout = async () => {
+const runLogout = async (
+  _: any, 
+  internal = false
+) => {
   const run1 = Deno.run({
     cmd: ['gp', 'env', '-u', 'AUTH_TOKEN'],
   })
   await run1.status()
-  console.log('👋 Bye bye');
+
+  if (!internal)
+    console.log('👋 Bye bye');
 }
 
 const runUser = async (
@@ -206,21 +211,16 @@ const runPlay = async (argv: any) => {
   await Deno.writeFile("/workspace/.soroban-secret-key", new TextEncoder().encode(sk))
 
   console.log(`🔐 Quest Keypair for Stellar Quest Series 5 Quest ${argv.index}
+✅ SOROBAN_SECRET_KEY environment variable has been updated
 ------------------------------------------
-Public Key: ${pk}
-Secret Key: ${sk}
-------------------------------------------
-Steps to use:
-------------------------------------------
-1. Fund the ${pk} account (maybe with the Futurenet Friendbot?)
-2. Pass --secret-key=${sk} in Soroban calls to the Futurenet
-3. Sing and dance 🎶💃🪩
-✅ SOROBAN_SECRET_KEY env variable has been updated`);
+Public Key: ${pk} (don't forget to fund me)
+Secret Key: ${sk}`);
 }
 
 const runFund = async (argv: any) => {
   return fetch(`https://friendbot-futurenet.stellar.org/?addr=${argv.addr}`)
   .then(handleResponse)
+  .catch(printErrorBreak)
 }
 
 const runCheck = async (argv: any) => {
@@ -339,8 +339,15 @@ const runSubmit = async (argv: any) => {
 
         console.log('❌ Transaction submission failed but a new XDR has been generated. Please sign it and try again');
         console.log(xdr);
-      } else throw err
+      } else printErrorBreak(err)
     })
+}
+
+const runHelp = async () => {
+  const run1 = Deno.run({
+    cmd: ['sq', 'help'],
+  })
+  await run1.status()
 }
 
 const getEnv = async () => {
@@ -386,8 +393,8 @@ const getUser = (env: any) => {
   })
     .then(handleResponse)
     .catch(async (err) => {
-      await runLogout()
-      throw err
+      await runLogout(null, true)
+      printErrorBreak(err)
     })
 }
 
@@ -403,6 +410,7 @@ const getCheckToken = (index: number, env: any) => {
     }
   })
     .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
@@ -417,6 +425,7 @@ const getClaimToken = (checkToken: string, env: any) => {
     }
   })
     .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
@@ -434,6 +443,7 @@ const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
     })
   })
     .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const handleResponse = async (response: any) => {
@@ -444,12 +454,19 @@ const handleResponse = async (response: any) => {
       ? response.json()
       : response.text()
 
-  throw isResponseJson
+    throw isResponseJson
     ? {
       ...await response.json(),
       status: response.status
     }
     : await response.text()
+}
+const printErrorBreak = (error: any) => {
+  if (typeof error === 'string')
+    console.error(error)
+  else
+    console.error(JSON.stringify(error, null, 2))
+  throw 0
 }
 
 yargs(Deno.args)
@@ -459,30 +476,32 @@ yargs(Deno.args)
   .command(['user', 'me'], 'Print out information about yourself', {}, runUser)
   .command('open', 'Open the Stellar Quest website', runOpen)
   .command('pull', 'Pull any new or missing Quests into the /quests directory', runPull)
-  .command(['play', 'quest'], 'Generate a Quest Keypair to play a Quest', (yargs: any) => yargs
+  .command(`play [index]`, 'Generate a Quest Keypair to play a Quest', (yargs: any) => yargs
     .positional('index', {
       describe: 'The index of the quest to play',
       alias: ['i', 'number', 'n', 'quest', 'q'],
     }).demandOption(['index']), runPlay)
-  .command('fund', 'Create and fund an account on the Futurenet', (yargs: any) => yargs
+  .command('fund [key]', 'Create and fund an account on the Futurenet', (yargs: any) => yargs
     .positional('key', {
       describe: 'The public key of the account to fund',
-      alias: ['addr', 'address', 'acct', 'account']
+      alias: ['k', 'addr', 'address', 'acct', 'account']
     })
     .demandOption(['key']), runFund)
-  .command(['check', 'verify'], 'Check your Quest answer', (yargs: any) => yargs
+  .command('check [index]', 'Check your Quest answer', (yargs: any) => yargs
     .positional('index', {
       describe: 'The index of the quest to check',
       alias: ['i', 'number', 'n', 'quest', 'q'],
     }).demandOption(['index']), runCheck)
-  .command('submit', 'Submit a signed reward XDR to the Stellar Quest backend', (yargs: any) => yargs
+  .command('submit [xdr]', 'Submit a signed reward XDR to the Stellar Quest backend', (yargs: any) => yargs
     .positional('xdr', {
       describe: 'The XDR to submit to the Stellar Quest backend',
+      alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
-  // nesho? | allow the user to request new Quest Keypairs
+  .command('*', '', {}, runHelp)
+  .showHelpOnFail(false)
   .demandCommand(1)
-  .showHelpOnFail(false, 'Pass --help for available options')
+  .help('help')
   .alias('help', 'h')
   .strict()
   .parse()
