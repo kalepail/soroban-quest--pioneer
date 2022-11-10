@@ -67,17 +67,17 @@ take a second to examine this a bit more in-depth.
 
 ![Terminal Panel][terminals]
 
-#### Terminals
+#### **Terminals**
 
 On the right-hand side of this panel, you'll notice there are 4 (four) shells
 open. Each of them is designed for a specific purpose:
 
-- `Albedo Signer` - A simple little webapp that facilitiates rewards for
+- `Albedo Signer` - A simple webapp that facilitiates claiming rewards for
   completed quests. (You won't be required to actually *do* anything in this
   shell.)
 - `Futurenet: docker` - An instance of the Futurenet node that is running inside
   your Gitpod workspace. (You won't be required to actually *do* anything in
-  this shell.)
+  this shell either.)
 - `CLI - Futurenet` - This shell is designed for interacting with the Futurenet
   network. It has some environment variables customized for this purpose, and
   will make it easier and quicker for you to work with the network. When we say
@@ -90,14 +90,14 @@ open. Each of them is designed for a specific purpose:
 Above this list of terminals, you could use the **+** icon to open another
 terminal, if you closed one of yours.
 
-#### Ports
+#### **Ports**
 
 There are also a couple open ports that can be useful during your quests. You
 can see these ports by clicking on **Ports** in the top part of the terminal
 panel (see above screenshot). You could also click on **Ports: 8000, 3000** in
 the lower-right-hand corner of the Gitpod workspace (see below screenshot).
 
-- **Port 3000** - You can pretty well be unconcerned about the **Albedo Signer**
+- **Port 3000** - You can ignore the **Albedo Signer**
   port. That's open so we can use it along with the `sq` CLI to get your earned
   rewards to you.
 - **Port 8000** - On port 8000 of your Gitpod workspace lives various tools to
