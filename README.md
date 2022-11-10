@@ -11,6 +11,8 @@
 - [Video Walkthrough](#video-walkthrough)
 - [Gitpod](#gitpod)
   - [VS Code](#vs-code)
+  - [Terminal and Ports](#terminal-and-ports)
+    - [Terminals](#terminals)
   - [Docker Container'd](#docker-containerd)
   - [Gitpod CLI](#gitpod-cli)
 - [Stellar Quest CLI](#stellar-quest-cli)
@@ -68,6 +70,41 @@ your browser! All the things you can do in the local version of VS Code, you can
 do here. Just about any extension you have in your local copy you can install
 here. You get the idea.
 
+### Terminal and Ports
+
+In your Gitpod workspace, you'll notice a panel at the bottom that is open to a
+few terminal shells. There are a few methods to show/hide this panel, but my
+favorite is the ``Ctrl + ` `` keyboard shortcut. There is a lot of information
+in the [VS Code docs][vsc-docs] about how to use these integrated terminals.
+
+This panel will actually be pretty important to your questing success, so let's
+take a second to examine this a bit more in-depth.
+
+![Terminal Panel][terminals]
+
+#### Terminals
+
+On the right-hand side of this panel, you'll notice there are 4 (four) shells
+open. Each of them is designed for a specific purpose:
+
+- `Albedo Signer` - A simple little webapp that facilitiates rewards for
+  completed quests. (You won't be required to actually *do* anything in this
+  shell.)
+- `Futurenet: docker` - An instance of the Futurenet node that is running inside
+  your Gitpod workspace. (You won't be required to actually *do* anything in
+  this shell.)
+- `CLI - Futurenet` - This shell is designed for interacting with the Futurenet
+  network. It has some environment variables customized for this purpose, and
+  will make it easier and quicker for you to work with the network. When we say
+  something like "you need to deploy a contract to the Futurenet," you'll want
+  to do that from this shell.
+- `CLI - Sandbox` - This is the "playground" you can use to build and test a
+  contract without needing to deploy it anywhere. Anything done in the sandbox
+  environment will not affect any accounts on the Futurenet network.
+
+Above this list of terminals, you could use the **+** icon to open another
+terminal, if you closed one of yours.
+
 ### Docker Container'd
 
 That's right, Gitpod is running on a Docker-ized container so that we can be
@@ -92,7 +129,8 @@ called "Squirtle" but you'll become more familiar with invoking it as `sq`. The
 code for it lives in the `_squirtle/` directory, but you won't need to bother
 with anything in there.
 
-It exists as a command line tool that can connect your Gitpod instance with the SQ backend. You can use it to:
+It exists as a command line tool that can connect your Gitpod instance with the
+SQ backend. You can use it to:
 
 - login to your Stellar Quest account using discord (or logout),
 - get information about the currently logged in user,
@@ -218,3 +256,5 @@ have fun!!
 [soroban-cli]: https://github.com/stellar/soroban-cli
 [video]: https://youtu.be/6_tgpth6U5Y
 [thumbnail]: https://user-images.githubusercontent.com/2024293/201189898-dd9ae16e-698c-4b2d-b442-fec7d7222f3f.jpg
+[terminals]: https://user-images.githubusercontent.com/2024293/201201300-f86bbc98-6c0a-4189-b92c-fe4145c95f0d.png
+[vsc-docs]: https://code.visualstudio.com/docs/terminal/basics
