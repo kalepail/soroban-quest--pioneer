@@ -211,16 +211,10 @@ const runPlay = async (argv: any) => {
   await Deno.writeFile("/workspace/.soroban-secret-key", new TextEncoder().encode(sk))
 
   console.log(`🔐 Quest Keypair for Stellar Quest Series 5 Quest ${argv.index}
+✅ SOROBAN_SECRET_KEY environment variable has been updated
 ------------------------------------------
-Public Key: ${pk}
-Secret Key: ${sk}
-------------------------------------------
-Steps to use:
-------------------------------------------
-1. Fund the ${pk} account (maybe with the Futurenet Friendbot?)
-2. Pass --secret-key=${sk} in Soroban calls to the Futurenet
-3. Sing and dance 🎶💃🪩
-✅ SOROBAN_SECRET_KEY env variable has been updated`);
+Public Key: ${pk} (don't forget to fund me)
+Secret Key: ${sk}`);
 }
 
 const runFund = async (argv: any) => {
