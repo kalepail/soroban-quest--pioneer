@@ -349,6 +349,13 @@ const runSubmit = async (argv: any) => {
     })
 }
 
+const runHelp = async () => {
+  const run1 = Deno.run({
+    cmd: ['sq', 'help'],
+  })
+  await run1.status()
+}
+
 const getEnv = async () => {
   const run1 = Deno.run({
     cmd: ['gp', 'env'],
@@ -470,6 +477,7 @@ const printErrorBreak = (error: any) => {
 
 yargs(Deno.args)
   .scriptName('sq')
+  .command('*', '', runHelp)
   .command('login', 'Connect your Stellar Quest account to Gitpod', runLogin)
   .command('logout', 'Disconnect your Stellar Quest account from Gitpod', runLogout)
   .command(['user', 'me'], 'Print out information about yourself', {}, runUser)
@@ -497,9 +505,9 @@ yargs(Deno.args)
       alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
-  // nesho? | allow the user to request new Quest Keypairs
+  .showHelpOnFail(false)
   .demandCommand(1)
-  .showHelpOnFail(false, 'Pass --help for available options')
+  .help('help')
   .alias('help', 'h')
   .strict()
   .parse()
