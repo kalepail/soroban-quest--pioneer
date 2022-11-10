@@ -14,9 +14,23 @@ const runLogin = async () => {
     user = await getUser(env)
 
   else {
-    const authConfirmed = await Confirm.prompt('Authenticate your Gitpod account with Discord');
+    const rulesConfirmed = await Select.prompt({
+      message: "Do you agree to abide by our Official Rules?",
+      options: [
+        { name: "Yes", value: "yes" },
+        { name: "Review", value: "open" },
+        { name: "No", value: "no" },
+      ],
+    });
 
-    if (!authConfirmed)
+    if (rulesConfirmed === 'open') {
+      const run0 = Deno.run({
+        cmd: ['gp', 'preview', '--external', 'https://quest.stellar.org/rules/series-5']
+      })
+      await run0.status()
+    }
+
+    if (rulesConfirmed !== 'yes') 
       return
 
     const run1 = Deno.run({
@@ -57,11 +71,12 @@ const runLogin = async () => {
   await runUser(null, user, env)
 }
 
-const runLogout = () => {
+const runLogout = async () => {
   const run1 = Deno.run({
     cmd: ['gp', 'env', '-u', 'AUTH_TOKEN'],
   })
-  return run1.status()
+  await run1.status()
+  console.log('👋 Bye bye');
 }
 
 const runUser = async (
