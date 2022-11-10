@@ -71,12 +71,17 @@ const runLogin = async () => {
   await runUser(null, user, env)
 }
 
-const runLogout = async () => {
+const runLogout = async (
+  _: any, 
+  internal = false
+) => {
   const run1 = Deno.run({
     cmd: ['gp', 'env', '-u', 'AUTH_TOKEN'],
   })
   await run1.status()
-  console.log('👋 Bye bye');
+
+  if (!internal)
+    console.log('👋 Bye bye');
 }
 
 const runUser = async (
@@ -221,6 +226,7 @@ Steps to use:
 const runFund = async (argv: any) => {
   return fetch(`https://friendbot-futurenet.stellar.org/?addr=${argv.addr}`)
   .then(handleResponse)
+  .catch(printErrorBreak)
 }
 
 const runCheck = async (argv: any) => {
@@ -339,7 +345,7 @@ const runSubmit = async (argv: any) => {
 
         console.log('❌ Transaction submission failed but a new XDR has been generated. Please sign it and try again');
         console.log(xdr);
-      } else throw err
+      } else printErrorBreak(err)
     })
 }
 
@@ -385,9 +391,9 @@ const getUser = (env: any) => {
     }
   })
     .then(handleResponse)
-    .catch(async (err) => {
-      await runLogout()
-      throw err
+    .catch((err) => {
+      printErrorBreak(err)
+      return runLogout(null, true)
     })
 }
 
@@ -403,6 +409,7 @@ const getCheckToken = (index: number, env: any) => {
     }
   })
     .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
@@ -417,6 +424,7 @@ const getClaimToken = (checkToken: string, env: any) => {
     }
   })
     .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
@@ -434,6 +442,7 @@ const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
     })
   })
     .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const handleResponse = async (response: any) => {
@@ -444,12 +453,19 @@ const handleResponse = async (response: any) => {
       ? response.json()
       : response.text()
 
-  throw isResponseJson
+    throw isResponseJson
     ? {
       ...await response.json(),
       status: response.status
     }
     : await response.text()
+}
+const printErrorBreak = (error: any) => {
+  if (typeof error === 'string')
+    console.error(error)
+  else
+    console.error(JSON.stringify(error, null, 2))
+  throw 0
 }
 
 yargs(Deno.args)
