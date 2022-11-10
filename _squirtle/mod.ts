@@ -160,15 +160,15 @@ const runOpen = async () => {
 }
 
 const runPull = async () => {
-  const run0 = Deno.run({
-    cmd: ['pwd'],
-    stdout: 'piped'
-  })
-  const workingDir = new TextDecoder().decode(await run0.output()).trim()
-  const [root, directory, workspace] = workingDir.split('/')
-  const questDirectory = [root, directory, workspace].join('/') + '/quests/'
+  // const run0 = Deno.run({
+  //   cmd: ['pwd'],
+  //   stdout: 'piped'
+  // })
+  // const workingDir = new TextDecoder().decode(await run0.output()).trim()
+  // const [root, directory, workspace] = workingDir.split('/')
+  // const questDirectory = [root, directory, workspace].join('/') + '/quests/'
 
-  console.log(questDirectory);
+  // console.log(questDirectory);
 
   const run1 = Deno.run({
     cmd: ['git', 'stash',],
@@ -181,7 +181,8 @@ const runPull = async () => {
   await run2.status()
 
   const run3 = Deno.run({
-    cmd: ['git', 'checkout', 'origin/main', '--theirs', questDirectory],
+    cmd: ['git', 'pull', '-X', 'theirs']
+    // cmd: ['git', 'checkout', 'origin/main', '--theirs', questDirectory],
   })
   await run3.status()
 
