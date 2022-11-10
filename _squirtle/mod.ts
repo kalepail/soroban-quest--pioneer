@@ -475,25 +475,26 @@ yargs(Deno.args)
   .command(['user', 'me'], 'Print out information about yourself', {}, runUser)
   .command('open', 'Open the Stellar Quest website', runOpen)
   .command('pull', 'Pull any new or missing Quests into the /quests directory', runPull)
-  .command(['play', 'quest'], 'Generate a Quest Keypair to play a Quest', (yargs: any) => yargs
+  .command(`play [index]`, 'Generate a Quest Keypair to play a Quest', (yargs: any) => yargs
     .positional('index', {
       describe: 'The index of the quest to play',
       alias: ['i', 'number', 'n', 'quest', 'q'],
     }).demandOption(['index']), runPlay)
-  .command('fund', 'Create and fund an account on the Futurenet', (yargs: any) => yargs
+  .command('fund [key]', 'Create and fund an account on the Futurenet', (yargs: any) => yargs
     .positional('key', {
       describe: 'The public key of the account to fund',
-      alias: ['addr', 'address', 'acct', 'account']
+      alias: ['k', 'addr', 'address', 'acct', 'account']
     })
     .demandOption(['key']), runFund)
-  .command(['check', 'verify'], 'Check your Quest answer', (yargs: any) => yargs
+  .command('check [index]', 'Check your Quest answer', (yargs: any) => yargs
     .positional('index', {
       describe: 'The index of the quest to check',
       alias: ['i', 'number', 'n', 'quest', 'q'],
     }).demandOption(['index']), runCheck)
-  .command('submit', 'Submit a signed reward XDR to the Stellar Quest backend', (yargs: any) => yargs
+  .command('submit [xdr]', 'Submit a signed reward XDR to the Stellar Quest backend', (yargs: any) => yargs
     .positional('xdr', {
       describe: 'The XDR to submit to the Stellar Quest backend',
+      alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
   // nesho? | allow the user to request new Quest Keypairs
