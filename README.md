@@ -37,7 +37,7 @@ walkthrough you can check out, as well. It doesn't contain everything in this
 README, but it's a start. If that kind of content sounds like it's more up your
 alley, you can [watch the video right here][video]!
 
-![Soroban Pioneer Quest Walkthrough][def]
+[![Soroban Pioneer Quest Walkthrough][thumbnail]][video]
 
 ## Gitpod
 
@@ -200,5 +200,4 @@ have fun!!
 [vscode]: https://code.visualstudio.com/
 [soroban-cli]: https://github.com/stellar/soroban-cli
 [video]: https://youtu.be/6_tgpth6U5Y
-[thumbnail]: https://img.youtube.com/vi/6_tgpth6U5Y/maxresdefault.jpg
-[def]: thumbnail
+[thumbnail]: https://user-images.githubusercontent.com/2024293/201189898-dd9ae16e-698c-4b2d-b442-fec7d7222f3f.jpg
