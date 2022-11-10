@@ -34,10 +34,8 @@ so let's jump in!
 The rest of this README is quite heavily skewed toward written information.
 That's not everybody's primary way of learning, so we've created a video
 walkthrough you can check out, as well. It doesn't contain everything in this
-README, but it's a start. If that's more up your alley, you can watch the video
-right here!
-
-<!-- Insert Video URL -->
+README, but it's a start. If that kind of content sounds like it's more up your
+alley, you can [watch the video right here][video]!
 
 ## Gitpod
 
@@ -198,3 +196,4 @@ have fun!!
 [cargo]: https://doc.rust-lang.org/cargo/
 [vscode]: https://code.visualstudio.com/
 [soroban-cli]: https://github.com/stellar/soroban-cli
+[video]: https://youtu.be/6_tgpth6U5Y
