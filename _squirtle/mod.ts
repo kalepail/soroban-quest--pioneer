@@ -477,7 +477,6 @@ const printErrorBreak = (error: any) => {
 
 yargs(Deno.args)
   .scriptName('sq')
-  .command('*', '', runHelp)
   .command('login', 'Connect your Stellar Quest account to Gitpod', runLogin)
   .command('logout', 'Disconnect your Stellar Quest account from Gitpod', runLogout)
   .command(['user', 'me'], 'Print out information about yourself', {}, runUser)
@@ -505,6 +504,7 @@ yargs(Deno.args)
       alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
+  .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
   .demandCommand(1)
   .help('help')
