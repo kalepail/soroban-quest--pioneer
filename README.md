@@ -91,7 +91,7 @@ invoke `sq <command> --help` to get more information on how to use a particular
 command.
 
 ```
-gitpod /workspace/soroban-pioneer-quest (main) $ sq --help
+gitpod /workspace/soroban-quest--pioneer (main) $ sq --help
 sq <command>
 
 Commands:
@@ -101,6 +101,7 @@ Commands:
   sq open    Open the Stellar Quest website
   sq pull    Pull any new or missing Quests into the /quests directory
   sq play    Generate a Quest Keypair to play a Quest           [aliases: quest]
+  sq fund    Create and fund an account on the Futurenet
   sq check   Check your Quest answer                           [aliases: verify]
   sq submit  Submit a signed reward XDR to the Stellar Quest backend
 
