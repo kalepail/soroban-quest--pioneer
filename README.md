@@ -13,6 +13,7 @@
   - [VS Code](#vs-code)
   - [Terminal and Ports](#terminal-and-ports)
     - [Terminals](#terminals)
+    - [Ports](#ports)
   - [Docker Container'd](#docker-containerd)
   - [Gitpod CLI](#gitpod-cli)
 - [Stellar Quest CLI](#stellar-quest-cli)
@@ -104,6 +105,27 @@ open. Each of them is designed for a specific purpose:
 
 Above this list of terminals, you could use the **+** icon to open another
 terminal, if you closed one of yours.
+
+#### Ports
+
+There are also a couple open ports that can be useful during your quests. You
+can see these ports by clicking on **Ports** in the top part of the terminal
+panel (see above screenshot). You could also click on **Ports: 8000, 3000** in
+the lower-right-hand corner of the Gitpod workspace (see below screenshot).
+
+- **Port 3000** - You can pretty well be unconcerned about the **Albedo Signer**
+  port. That's open so we can use it along with the `sq` CLI to get your earned
+  rewards to you.
+- **Port 8000** - On port 8000 of your Gitpod workspace lives various tools to
+  interact with the Futurenet network. There is a running instance of JSON-RPC
+  (which you will need to use) and a Horizon API server (which can be *very*
+  useful).
+
+Both of these ports are publicly available on the web, at the listed addresses.
+You could even use this RPC endpoint to interact with the Futurenet network from
+your local computer!
+
+![Open Gitpod Ports][ports]
 
 ### Docker Container'd
 
@@ -258,3 +280,4 @@ have fun!!
 [thumbnail]: https://user-images.githubusercontent.com/2024293/201189898-dd9ae16e-698c-4b2d-b442-fec7d7222f3f.jpg
 [terminals]: https://user-images.githubusercontent.com/2024293/201201300-f86bbc98-6c0a-4189-b92c-fe4145c95f0d.png
 [vsc-docs]: https://code.visualstudio.com/docs/terminal/basics
+[ports]: https://user-images.githubusercontent.com/2024293/201206484-f69f9123-3550-49be-97f2-f6f39fe9aa2f.png
