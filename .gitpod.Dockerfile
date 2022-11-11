@@ -1,5 +1,5 @@
 # Our customized docker image uses Gitpod's "workspace-full" image as a base.
-FROM gitpod/workspace-full:2022-11-04-17-43-13
+FROM gitpod/workspace-full:2022-11-09-13-54-49
 
 # These "RUN" shell commands are run on top of the "workspace-full" image, and
 # then committed as a new image which will be used for the next steps.
@@ -27,10 +27,10 @@ ENV SCCACHE_DIR=/workspace/.sccache
 
 # In this chunk of "RUN" instructions, we are getting our rust environment
 # ready and prepared to write some Soroban smart contracts.
-RUN rustup update stable
+RUN rustup install stable
 RUN rustup target add --toolchain stable wasm32-unknown-unknown
 RUN rustup component add --toolchain stable rust-src
-RUN rustup update nightly
+RUN rustup install nightly
 RUN rustup target add --toolchain nightly wasm32-unknown-unknown
 RUN rustup component add --toolchain nightly rust-src
 RUN rustup default stable
