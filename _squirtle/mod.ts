@@ -48,7 +48,6 @@ const runLogin = async () => {
 
     const run2 = Deno.run({
       cmd: ['gp', 'preview', '--external', discordUrl.toString()]
-      // cmd: ['gp', 'preview', '--external', `https://quest.stellar.org/register?gitpod_auth_url=${encodeURIComponent(discordUrl.toString())}`]
     })
     await run2.status()
 
@@ -175,16 +174,6 @@ const runOpen = async () => {
 }
 
 const runPull = async () => {
-  // const run0 = Deno.run({
-  //   cmd: ['pwd'],
-  //   stdout: 'piped'
-  // })
-  // const workingDir = new TextDecoder().decode(await run0.output()).trim()
-  // const [root, directory, workspace] = workingDir.split('/')
-  // const questDirectory = [root, directory, workspace].join('/') + '/quests/'
-
-  // console.log(questDirectory);
-
   const run1 = Deno.run({
     cmd: ['git', 'stash',],
   })
@@ -197,7 +186,6 @@ const runPull = async () => {
 
   const run3 = Deno.run({
     cmd: ['git', 'pull', '-X', 'theirs']
-    // cmd: ['git', 'checkout', 'origin/main', '--theirs', questDirectory],
   })
   await run3.status()
 
@@ -235,28 +223,26 @@ Secret Key: ${sk}`)
   await autoFund(pk)
 }
 
-const autoFund = async(pk: string) => {
+const autoFund = async (pk: string) => {
   const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
-    .then(response => response.status == 200)
+  .then(({status}) => status === 200)
 
-  console.log('\n')  
-  if (accountIsFunded) {
-    console.log(`💰 Your account is already funded!`)
+  console.log('------------------------------------------')
+
+  if (accountIsFunded)
     return
-  }
-  console.log(`🚫 Your account is not funded, yet.`)
 
   const fundDecision = await Select.prompt({
-    message: "🏧 Do you want to fund your account now (only needed once)?",
+    message: "🏧 Do you want to fund this account now?",
     options: [
-      { name: "💁 Yes, I'll take that!", value: "yes" },
+      { name: "💁 Yes plese!", value: "yes" },
       { name: "🙅 No thanks", value: "no" },
     ],
     default: "yes"
   })
-  if (fundDecision == "yes") {
+
+  if (fundDecision == "yes")
     return doFund(pk)
-  }
 }
 
 const doFund = async(pk: string) => {
@@ -492,7 +478,6 @@ const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
     })
   })
     .then(handleResponse)
-    .catch(printErrorBreak)
 }
 
 const handleResponse = async (response: any) => {
