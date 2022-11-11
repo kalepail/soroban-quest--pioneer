@@ -78,7 +78,22 @@ const runLogout = async (
   const run1 = Deno.run({
     cmd: ['gp', 'env', '-u', 'AUTH_TOKEN'],
   })
-  await run1.status()
+  const run2 = Deno.run({
+    cmd: ['gp', 'env', '-u', 'ACCESS_TOKEN'],
+  })
+  const run3 = Deno.run({
+    cmd: ['gp', 'env', '-u', 'CLAIM_TOKEN'],
+  })
+  const run4 = Deno.run({
+    cmd: ['gp', 'env', '-u', 'REFRESH_TOKEN'],
+  })
+
+  await Promise.all([
+    run1.status(),
+    run2.status(),
+    run3.status(),
+    run4.status(),
+  ])
 
   if (!internal)
     console.log('👋 Bye bye');
