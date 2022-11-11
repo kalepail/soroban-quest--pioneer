@@ -73,7 +73,7 @@ github:
     pullRequests: true
     pullRequestsFromForks: true
     addCheck: false
-    addComment: false
+    addComment: true
     addBadge: true
 
 # We have a couple ports open in your Gitpod workspace to facilitate the quest
