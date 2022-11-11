@@ -236,7 +236,7 @@ const runCheck = async (argv: any) => {
   const { ENV } = env
   const isDev = ENV !== 'prod'
   const siteUrl = isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
-
+  
   if (!user.pk) {
     const missingPkConfirmed = await Confirm.prompt(`You have not yet connected your Stellar wallet. 
    This will affect your ability to claim NFT and XLM rewards.
@@ -268,6 +268,9 @@ const runCheck = async (argv: any) => {
 
   const { checkToken } = await getCheckToken(index, env)
   const claimToken = await getClaimToken(checkToken, env)
+
+  if (!claimToken) // No claim token but also no error, you've already solved
+    return console.log("Correct! 🎉🧠");
 
   const run3 = Deno.run({
     cmd: ['gp', 'env', `CLAIM_TOKEN=${claimToken}`],
