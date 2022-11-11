@@ -215,7 +215,23 @@ const runPlay = async (argv: any) => {
 ✅ SOROBAN_SECRET_KEY environment variable has been updated
 ------------------------------------------
 Public Key: ${pk} (don't forget to fund me)
-Secret Key: ${sk}`);
+Secret Key: ${sk}`)
+
+  await autoFund(pk)
+}
+
+const autoFund = async(pk: string) => {
+  const fundDecision = await Select.prompt({
+    message: "🏧 Do you want to fund your account now (only needed once)?",
+    options: [
+      { name: "Yes", value: "yes" },
+      { name: "No", value: "no" },
+    ],
+    default: "yes"
+  })
+  if (fundDecision == "yes") {
+    return runFund(pk)
+  }
 }
 
 const runFund = async (argv: any) => {
