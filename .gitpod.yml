@@ -25,6 +25,7 @@ tasks:
     command: |
       docker run --rm -it \
       --name stellar \
+      --platform linux/amd64 \
       -p 8000:8000 \
       stellar/quickstart:soroban-dev@sha256:0993d3350148af6ffeab5dc8f0b835236b28dade6dcae77ff8a09317162f768d \
       --futurenet \
