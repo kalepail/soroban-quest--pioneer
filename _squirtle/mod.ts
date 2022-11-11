@@ -227,10 +227,10 @@ const autoFund = async (pk: string) => {
   const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
   .then(({status}) => status === 200)
 
-  console.log('------------------------------------------')
-
   if (accountIsFunded)
     return
+
+  console.log('------------------------------------------')
 
   const fundDecision = await Select.prompt({
     message: "🏧 Do you want to fund this account now?",
