@@ -5,7 +5,6 @@
 [package]
 name = "soroban-hello-world-contract"
 version = "0.0.0"
-authors = ["Stellar Development Foundation <info@stellar.org>"]
 license = "Apache-2.0"
 # An "edition" is Rust's way of introducing backwards-incompatible changes to
 # the language. Here, we are using the latest edition.
@@ -25,9 +24,9 @@ doctest = false
 # The "dependencies" section specifies the names and versions that our package
 # will require.
 [dependencies]
-soroban-sdk = "0.1.0"
+soroban-sdk = "0.2.1"
 
 # The "dev-dependencies" are not used when compiling a package for building, but
 # are used for compiling tests, examples, and benchmarks.
 [dev-dependencies]
-soroban-sdk = { version = "0.1.0", features = ["testutils"] }
+soroban-sdk = { version = "0.2.1", features = ["testutils"] }
