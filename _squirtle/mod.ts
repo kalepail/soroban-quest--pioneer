@@ -221,6 +221,14 @@ Secret Key: ${sk}`)
 }
 
 const autoFund = async(pk: string) => {
+  const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
+    .then(response => response.status == 200)
+
+  console.log(`\nYour account is ${accountIsFunded?'already':'not'} funded`)
+  if (accountIsFunded) {
+    return
+  }
+
   const fundDecision = await Select.prompt({
     message: "🏧 Do you want to fund your account now (only needed once)?",
     options: [
