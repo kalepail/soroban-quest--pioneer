@@ -48,7 +48,6 @@ const runLogin = async () => {
 
     const run2 = Deno.run({
       cmd: ['gp', 'preview', '--external', discordUrl.toString()]
-      // cmd: ['gp', 'preview', '--external', `https://quest.stellar.org/register?gitpod_auth_url=${encodeURIComponent(discordUrl.toString())}`]
     })
     await run2.status()
 
@@ -175,16 +174,6 @@ const runOpen = async () => {
 }
 
 const runPull = async () => {
-  // const run0 = Deno.run({
-  //   cmd: ['pwd'],
-  //   stdout: 'piped'
-  // })
-  // const workingDir = new TextDecoder().decode(await run0.output()).trim()
-  // const [root, directory, workspace] = workingDir.split('/')
-  // const questDirectory = [root, directory, workspace].join('/') + '/quests/'
-
-  // console.log(questDirectory);
-
   const run1 = Deno.run({
     cmd: ['git', 'stash',],
   })
@@ -197,7 +186,6 @@ const runPull = async () => {
 
   const run3 = Deno.run({
     cmd: ['git', 'pull', '-X', 'theirs']
-    // cmd: ['git', 'checkout', 'origin/main', '--theirs', questDirectory],
   })
   await run3.status()
 
@@ -230,13 +218,41 @@ const runPlay = async (argv: any) => {
 ✅ SOROBAN_SECRET_KEY environment variable has been updated
 ------------------------------------------
 Public Key: ${pk} (don't forget to fund me)
-Secret Key: ${sk}`);
+Secret Key: ${sk}`)
+
+  await autoFund(pk)
+}
+
+const autoFund = async (pk: string) => {
+  const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
+  .then(({status}) => status === 200)
+
+  console.log('------------------------------------------')
+
+  if (accountIsFunded)
+    return
+
+  const fundDecision = await Select.prompt({
+    message: "🏧 Do you want to fund this account now?",
+    options: [
+      { name: "💁 Yes plese!", value: "yes" },
+      { name: "🙅 No thanks", value: "no" },
+    ],
+    default: "yes"
+  })
+
+  if (fundDecision == "yes")
+    return doFund(pk)
+}
+
+const doFund = async(pk: string) => {
+  return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
+    .then(handleResponse)
+    .catch(printErrorBreak)
 }
 
 const runFund = async (argv: any) => {
-  return fetch(`https://friendbot-futurenet.stellar.org/?addr=${argv.addr}`)
-  .then(handleResponse)
-  .catch(printErrorBreak)
+  return doFund(argv.addr)
 }
 
 const runCheck = async (argv: any) => {
@@ -462,7 +478,6 @@ const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
     })
   })
     .then(handleResponse)
-    .catch(printErrorBreak)
 }
 
 const handleResponse = async (response: any) => {
