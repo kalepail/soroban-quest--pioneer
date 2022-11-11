@@ -224,28 +224,34 @@ const autoFund = async(pk: string) => {
   const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
     .then(response => response.status == 200)
 
-  console.log(`\nYour account is ${accountIsFunded?'already':'not'} funded`)
+  console.log('\n')  
   if (accountIsFunded) {
+    console.log(`💰 Your account is already funded!`)
     return
   }
+  console.log(`🚫 Your account is not funded, yet.`)
 
   const fundDecision = await Select.prompt({
     message: "🏧 Do you want to fund your account now (only needed once)?",
     options: [
-      { name: "Yes", value: "yes" },
-      { name: "No", value: "no" },
+      { name: "💁 Yes, I'll take that!", value: "yes" },
+      { name: "🙅 No thanks", value: "no" },
     ],
     default: "yes"
   })
   if (fundDecision == "yes") {
-    return runFund(pk)
+    return doFund(pk)
   }
 }
 
+const doFund = async(pk: string) => {
+  return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
+    .then(handleResponse)
+    .catch(printErrorBreak)
+}
+
 const runFund = async (argv: any) => {
-  return fetch(`https://friendbot-futurenet.stellar.org/?addr=${argv.addr}`)
-  .then(handleResponse)
-  .catch(printErrorBreak)
+  return doFund(argv.addr)
 }
 
 const runCheck = async (argv: any) => {
