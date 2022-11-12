@@ -235,7 +235,7 @@ const autoFund = async (pk: string) => {
   const fundDecision = await Select.prompt({
     message: "🏧 Do you want to fund this account now?",
     options: [
-      { name: "💁 Yes plese!", value: "yes" },
+      { name: "💁 Yes please!", value: "yes" },
       { name: "🙅 No thanks", value: "no" },
     ],
     default: "yes"
