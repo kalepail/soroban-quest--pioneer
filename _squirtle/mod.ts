@@ -352,6 +352,7 @@ const runCheck = async (argv: any) => {
   }
 
   else if (signPrompt === 'xdr') {
+    console.log('👌 Sign the following XDR and then submit it with: sq submit <signed XDR>')
     console.log(xdr);
   }
 }
@@ -361,6 +362,10 @@ const runSubmit = async (argv: any) => {
   const { CLAIM_TOKEN } = env
 
   await submitClaimToken(CLAIM_TOKEN, argv.xdr, env)
+    .then(result => {
+      // TODO: print result.hash once /prize/claim returns it
+      console.log(`✅ Transaction submitted!`)
+    })
     .catch(async (err) => {
       const { claimToken } = err
 
@@ -489,7 +494,6 @@ const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
 
 const handleResponse = async (response: any) => {
   const isResponseJson = response.headers.get('content-type')?.indexOf('json') > -1
-
   if (response.ok)
     return isResponseJson
       ? response.json()
