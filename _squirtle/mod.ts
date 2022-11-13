@@ -224,8 +224,7 @@ Secret Key: ${sk}`)
 }
 
 const autoFund = async (pk: string) => {
-  const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
-  .then(({status}) => status === 200)
+  const accountIsFunded = await isAccountFunded(pk)
 
   if (accountIsFunded)
     return
@@ -245,14 +244,22 @@ const autoFund = async (pk: string) => {
     return doFund(pk)
 }
 
+const isAccountFunded = async (pk: string): Promise<boolean> => {
+  return await fetch(`http://localhost:8000/accounts/${pk}`)
+    .then(({status}) => status === 200)
+}
+
 const doFund = async(pk: string) => {
   return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
     .then(handleResponse)
     .catch(printErrorBreak)
 }
 
-const runFund = async (argv: any) => {
-  return doFund(argv.addr)
+const runFund = async ({ addr }: any) => {
+  const accountIsFunded = await isAccountFunded(addr)
+  if (accountIsFunded)
+    return console.log('👀 Your account has already been funded.')
+  return doFund(addr)
 }
 
 const runCheck = async (argv: any) => {
