@@ -308,7 +308,7 @@ const runCheck = async (argv: any) => {
   const claimToken = await getClaimToken(checkToken, env)
 
   if (!claimToken) // No claim token but also no error, you've already solved
-    return console.log("Correct! 🎉🧠");
+    return console.log("🎉 Correct! 🧠");
 
   const run3 = Deno.run({
     cmd: ['gp', 'env', `CLAIM_TOKEN=${claimToken}`],
@@ -325,7 +325,7 @@ const runCheck = async (argv: any) => {
   )
 
   if (!xdr) // In the case of anon or pk'less accounts
-    return console.log("Correct! 🎉🧠");
+    return console.log("🎉 Correct! 🧠");
 
   const signPrompt = await Select.prompt({
     message: "🎉 Correct! How would you like to sign your reward transaction?",
@@ -352,6 +352,12 @@ const runCheck = async (argv: any) => {
   }
 
   else if (signPrompt === 'xdr') {
+    console.log(`-----------------------------`);
+    console.log(`✅ Find the unsigned reward XDR below.`);
+    console.log(`   You can sign it wherever you please (e.g. Laboratory)`);
+    console.log(`   however you MUST submit that signed XDR back here with`);
+    console.log(`   sq submit <signed_xdr>`);
+    console.log(`-----------------------------`);
     console.log(xdr);
   }
 }
