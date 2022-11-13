@@ -352,7 +352,6 @@ const runCheck = async (argv: any) => {
   }
 
   else if (signPrompt === 'xdr') {
-    console.log('👌 Sign the following XDR and then submit it with: sq submit <signed XDR>')
     console.log(xdr);
   }
 }
