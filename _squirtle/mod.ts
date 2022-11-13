@@ -117,13 +117,13 @@ const runUser = async (
     user = await getUser(env)
 
   console.log(`-----------------------------`);
-  console.log(`✅ Successfully authenticated`);
+  console.log(`✅ Successfully authenticated ${user.discord.username}#${user.discord.discriminator}`);
   console.log(`-----------------------------`);
 
   let missing = false
 
   if (user.pk)
-    console.log(`   ✅ Stellar wallet is connected`);
+    console.log(`   ✅ Stellar wallet ${user.pk.substring(0, 6)}...${user.pk.substring(user.pk.length - 6)} is connected`);
   else {
     missing = true
     console.log(`   ❌ Please connect your Stellar wallet`);
