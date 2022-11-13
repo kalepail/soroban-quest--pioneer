@@ -345,8 +345,17 @@ const runCheck = async (argv: any) => {
   }
 
   else if (signPrompt === 'xdr') {
-    console.log(xdr);
+    console.log(`-----------------------------`);
+    console.log(`✅ Find the XDR to sign below.`);
+    console.log(`   You can sign it your`);
+    console.log(`   preferred way (e.g. lab)`);
+    console.log(`   You MUST submit the signed XDR`);
+    console.log(`   from here.\n`);
+    console.log(`   sq submit <SIGNED_XDR>`);
+    console.log(`-----------------------------`);
+    console.log(`${xdr}`);
   }
+
 }
 
 const runSubmit = async (argv: any) => {
