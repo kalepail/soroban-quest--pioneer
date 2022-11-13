@@ -224,8 +224,7 @@ Secret Key: ${sk}`)
 }
 
 const autoFund = async (pk: string) => {
-  const accountIsFunded = await fetch(`http://localhost:8000/accounts/${pk}`)
-  .then(({status}) => status === 200)
+  const accountIsFunded = await isAccountFunded(pk)
 
   if (accountIsFunded)
     return
@@ -245,13 +244,21 @@ const autoFund = async (pk: string) => {
     return doFund(pk)
 }
 
-const doFund = async(pk: string) => {
+const isAccountFunded = async (pk: string): Promise<boolean> => {
+  return await fetch(`http://localhost:8000/accounts/${pk}`)
+    .then(({status}) => status === 200)
+}
+
+const doFund = (pk: string) => {
   return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
     .then(handleResponse)
     .catch(printErrorBreak)
 }
 
 const runFund = async (argv: any) => {
+  if (await isAccountFunded(argv.addr))
+    return console.log('👀 Your account has already been funded.')
+
   return doFund(argv.addr)
 }
 
@@ -354,6 +361,17 @@ const runSubmit = async (argv: any) => {
   const { CLAIM_TOKEN } = env
 
   await submitClaimToken(CLAIM_TOKEN, argv.xdr, env)
+    .then(() => {
+      const { hash } = JSON.parse(
+        new TextDecoder().decode(
+          decode(
+            CLAIM_TOKEN.split('.')[1]
+          )
+        )
+      )
+
+      console.log(`✅ Transaction ${hash} submitted!`)
+    })
     .catch(async (err) => {
       const { claimToken } = err
 
@@ -482,7 +500,6 @@ const submitClaimToken = (claimToken: string, innerTx: string, env: any) => {
 
 const handleResponse = async (response: any) => {
   const isResponseJson = response.headers.get('content-type')?.indexOf('json') > -1
-
   if (response.ok)
     return isResponseJson
       ? response.json()
