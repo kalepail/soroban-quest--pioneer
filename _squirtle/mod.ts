@@ -249,17 +249,17 @@ const isAccountFunded = async (pk: string): Promise<boolean> => {
     .then(({status}) => status === 200)
 }
 
-const doFund = async(pk: string) => {
+const doFund = (pk: string) => {
   return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
     .then(handleResponse)
     .catch(printErrorBreak)
 }
 
-const runFund = async ({ addr }: any) => {
-  const accountIsFunded = await isAccountFunded(addr)
-  if (accountIsFunded)
+const runFund = async (argv: any) => {
+  if (await isAccountFunded(argv.addr))
     return console.log('👀 Your account has already been funded.')
-  return doFund(addr)
+
+  return doFund(argv.addr)
 }
 
 const runCheck = async (argv: any) => {
@@ -361,9 +361,16 @@ const runSubmit = async (argv: any) => {
   const { CLAIM_TOKEN } = env
 
   await submitClaimToken(CLAIM_TOKEN, argv.xdr, env)
-    .then(result => {
-      // TODO: print result.hash once /prize/claim returns it
-      console.log(`✅ Transaction submitted!`)
+    .then(() => {
+      const { hash } = JSON.parse(
+        new TextDecoder().decode(
+          decode(
+            CLAIM_TOKEN.split('.')[1]
+          )
+        )
+      )
+
+      console.log(`✅ Transaction ${hash} submitted!`)
     })
     .catch(async (err) => {
       const { claimToken } = err
