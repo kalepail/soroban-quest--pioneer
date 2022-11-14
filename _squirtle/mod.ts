@@ -402,6 +402,33 @@ const runSubmit = async (argv: any) => {
     })
 }
 
+
+const getRpcStatus = async () => {
+  return fetch('http://localhost:8000')
+    .then(response => response.json())
+   .then(({ingest_latest_ledger}) => ingest_latest_ledger > 0)
+    .catch(() => false)
+}
+
+const runGetRpcStatus = async (argv: any) => {
+  const ready = await getRpcStatus()
+
+  var statusMessage = ''
+  if (ready) {
+    statusMessage = '📡'
+    if (!argv.short) {
+      statusMessage += ' Your local horizon endpoint is ready to accept connections'
+    }
+  } else {
+    statusMessage = '⚙️'
+    if (!argv.short) {
+      statusMessage += ' Your local horizon endpoint is getting ready. It cannot accept and process soroban requests, yet'
+    }
+  }
+
+  console.log(statusMessage)
+}
+
 const runHelp = async () => {
   const run1 = Deno.run({
     cmd: ['sq', 'help'],
@@ -555,6 +582,11 @@ yargs(Deno.args)
       alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
+  .command('horizon', 'Check status of horizon RPC', (yargs: any) => yargs
+    .options('short', {
+      describe: 'only show status icon',
+      alias: ['s']
+    }), runGetRpcStatus)
   .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
   .demandCommand(1)
