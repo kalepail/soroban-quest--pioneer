@@ -316,7 +316,7 @@ const runCheck = async (argv: any) => {
   })
   await run3.status()
 
-  const { xdr, key, network, place } = JSON.parse(
+  const { xdr, key, network, place, amount } = JSON.parse(
     new TextDecoder().decode(
       decode(
         claimToken.split('.')[1]
@@ -329,8 +329,12 @@ const runCheck = async (argv: any) => {
 
   let message = "🎉 Correct!"
 
-  if (parseInt(place) >= 0)
-    message += ` You took place ${place + 1} ${place <= 2 ? '🏆' : '🏅'}.`
+  if (parseInt(place) >= 0) {
+    message += ` You took place ${place + 1} ${place <= 2 ? '🏆' : '🏅'}`
+
+    if (amount)
+      message += ` and won ${amount} XLM`
+  }
 
   const signPrompt = await Select.prompt({
     message: `${message}
