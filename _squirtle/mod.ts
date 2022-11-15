@@ -316,7 +316,7 @@ const runCheck = async (argv: any) => {
   })
   await run3.status()
 
-  const { xdr, key, network } = JSON.parse(
+  const { xdr, key, network, place } = JSON.parse(
     new TextDecoder().decode(
       decode(
         claimToken.split('.')[1]
@@ -327,8 +327,14 @@ const runCheck = async (argv: any) => {
   if (!xdr) // In the case of anon or pk'less accounts
     return console.log("🎉 Correct! 🧠");
 
+  let message = "🎉 Correct!"
+  if (place !== undefined)
+        message += ` You took place ${place + 1} ${place <= 2 ? '🏆' : '🏅'}`
+
+  console.log(message)
+
   const signPrompt = await Select.prompt({
-    message: "🎉 Correct! How would you like to sign your reward transaction?",
+    message: "How would you like to sign your reward transaction?",
     options: [
       { name: "Albedo", value: "albedo" },
       { name: "Raw XDR", value: "xdr" },
