@@ -403,27 +403,45 @@ const runSubmit = async (argv: any) => {
 }
 
 
-const getRpcStatus = async () => {
+const getRpcStatus = () => {
   return fetch('http://localhost:8000')
-    .then(response => response.json())
+    .then(handleResponse)
     .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
     .catch(() => false)
 }
 
 const runGetRpcStatus = async (argv: any) => {
-  const ready = await getRpcStatus()
+  const ready = false // await getRpcStatus()
 
-  var statusMessage = ''
+  let statusMessage = ''
+
+  // TODO if we're ready but using a SOROBAN_RPC_URL that isn't the Gitpod's ask if we want to revert (or maybe just revert by automatically?)
+
   if (ready) {
     statusMessage = '📡'
-    if (!argv.short) {
-      statusMessage += ' Your local horizon endpoint is ready to accept connections'
-    }
+    if (!argv.short)
+      statusMessage += ' Your local horizon endpoint is ready!'
   } else {
-    statusMessage = '⚙️'
-    if (!argv.short) {
-      statusMessage += ' Your local horizon endpoint is getting ready. It cannot accept and process soroban requests, yet'
-    }
+    statusMessage = '⏳'
+    if (!argv.short)
+      statusMessage += ' Your local horizon endpoint is not yet ready'
+
+    const altNet = await Select.prompt({
+      message: "Would you like to continue with one of our official endpoints?",
+      options: [
+        { name: "No", value: "no" },
+        // TODO support a write in option that if selected let's up paste in your own SOROBAN_RPC_URL endpoint (for the Kais and Overcats out there)
+        { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
+        { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
+        { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
+        { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
+        { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
+        { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc" },
+      ],
+      default: "no"
+    });
+
+    console.log(altNet) // TODO update the SOROBAN_RPC_URL but only in the CLI - Futurenet (may require an update to the bash-hook)
   }
 
   console.log(statusMessage)
