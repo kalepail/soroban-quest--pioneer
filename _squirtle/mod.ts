@@ -1,6 +1,7 @@
 import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
 import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
 import { Select, Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
+import { CHAR_LEFT_ANGLE_BRACKET } from 'https://deno.land/std@0.164.0/path/_constants.ts';
 
 const runLogin = async () => {
   let env: any = await getEnv()
@@ -330,15 +331,18 @@ const runCheck = async (argv: any) => {
   let message = "🎉 Correct!"
 
   if (parseInt(place) >= 0) {
-    message += ` You took place ${place + 1} ${place <= 2 ? '🏆' : '🏅'}`
+    message += ` You took place ${place + 1}`
 
     if (amount)
       message += ` and won ${amount} XLM`
+
+    message += ` ${place <= 2 ? '🏆' : '🏅'}${amount ? '💰' : ''}`
   }
 
+  console.log(message);
+
   const signPrompt = await Select.prompt({
-    message: `${message}
-How would you like to sign your reward transaction?`,
+    message: 'How would you like to sign your reward transaction?',
     options: [
       { name: "Albedo", value: "albedo" },
       { name: "Raw XDR", value: "xdr" },
