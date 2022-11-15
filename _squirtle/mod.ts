@@ -406,7 +406,7 @@ const runSubmit = async (argv: any) => {
 const getRpcStatus = async () => {
   return fetch('http://localhost:8000')
     .then(response => response.json())
-    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger == core_latest_ledger)
+    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
     .catch(() => false)
 }
 
