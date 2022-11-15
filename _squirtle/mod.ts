@@ -328,13 +328,13 @@ const runCheck = async (argv: any) => {
     return console.log("🎉 Correct! 🧠");
 
   let message = "🎉 Correct!"
-  if (place !== undefined)
-        message += ` You took place ${place + 1} ${place <= 2 ? '🏆' : '🏅'}`
 
-  console.log(message)
+  if (parseInt(place) >= 0)
+    message += ` You took place ${place + 1} ${place <= 2 ? '🏆' : '🏅'}.`
 
   const signPrompt = await Select.prompt({
-    message: "How would you like to sign your reward transaction?",
+    message: `${message}
+How would you like to sign your reward transaction?`,
     options: [
       { name: "Albedo", value: "albedo" },
       { name: "Raw XDR", value: "xdr" },
