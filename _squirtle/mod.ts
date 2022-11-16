@@ -416,7 +416,8 @@ const runRPC = async (argv: any) => {
 
     console.log(statusMessage)
 
-    return selectRPCEndpoint()
+    if (!argv.short)
+      return selectRPCEndpoint()
   }
 }
 
