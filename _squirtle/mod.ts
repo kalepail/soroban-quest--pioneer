@@ -245,7 +245,7 @@ const autoFund = async (pk: string) => {
 }
 
 const isAccountFunded = async (pk: string): Promise<boolean> => {
-  return await fetch(`http://localhost:8000/accounts/${pk}`)
+  return await fetch(`http://127.0.0.1:8000/accounts/${pk}`)
     .then(({status}) => status === 200)
 }
 
@@ -416,7 +416,7 @@ const runSubmit = async (argv: any) => {
 }
 
 const getRpcStatus = () => {
-  return fetch('http://localhost:8000')
+  return fetch('http://127.0.0.1:8000')
     .then(handleResponse)
     .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
     .catch(() => false)
@@ -427,7 +427,7 @@ const runHorizon = async (argv: any) => {
 
   let statusMessage = ''
 
-  // TODO if we're ready but using a SOROBAN_RPC_URL that isn't the Gitpod's ask if we want to revert (or maybe just revert by automatically?)
+  // TODO if we're ready but using a SOROBAN_RPC_URL that isn't the Gitpod's ask if we want to revert (or maybe just revert automatically?)
 
   if (ready) {
     statusMessage = '📡'
@@ -436,7 +436,9 @@ const runHorizon = async (argv: any) => {
       statusMessage += ' Your local horizon endpoint is ready!'
     
       console.log(statusMessage)
-  } else {
+  } 
+  
+  else {
     statusMessage = '⏳'
     
     if (!argv.short)
@@ -454,22 +456,25 @@ const runHorizon = async (argv: any) => {
         { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "Custom", value: "custom" }, // TODO support a write in option that if selected let's up paste in your own SOROBAN_RPC_URL endpoint (for the Kais and Overcats out there)
+        { name: "Custom", value: "custom" },
       ],
       default: "no"
     });
 
     if (altNet === 'no')
-      return
+      altNet = 'http://127.0.0.1:8000/soroban/rpc'
+    
+    else if (altNet === 'custom') {
+      const customAltNet = await Input.prompt(`Enter a custom RPC endpoint.\n   (remember to include the protocol, port number and /soroban/rpc path)`);
 
-    else {
-      if (altNet === 'custom')
-        altNet = await Input.prompt(`Enter a custom RPC endpoint.\n   (remember to include the protocol, port number and /soroban/rpc path)`);
+      if (
+        customAltNet.length <= 'http://:65535/soroban/rpc'.length
+        || !customAltNet.includes('/soroban/rpc')
+      ) console.log(`❌ Invalid RPC URL`)
+      else altNet = customAltNet
     }
 
     await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
-
-    // console.log(altNet) // TODO update the SOROBAN_RPC_URL but only in the CLI - Futurenet (may require an update to the bash-hook)
   }
 }
 
