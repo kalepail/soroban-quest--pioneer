@@ -448,7 +448,7 @@ const pickRPCEndpoint = async () => {
     altNet = 'http://127.0.0.1:8000/soroban/rpc'
   
   else if (altNet === 'custom') {
-    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint.\n   (remember to include the protocol, port number and /soroban/rpc path)`);
+    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
 
     if (
       customAltNet.length <= 'http://:65535/soroban/rpc'.length
