@@ -5,6 +5,9 @@ image:
 # These are the tasks that are run during the Gitpod setup. Each of the tasks
 # included will open its own terminal window where it can run.
 tasks:
+  # The "Albedo Signer" task begins a simple web app from within the Gitpod
+  # workspace that is used to communicate with the Stellar Quest backend for
+  # reward transaction signing.
   - name: "Albedo Signer"
     init: |
       cd _squirtle
