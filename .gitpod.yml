@@ -50,7 +50,7 @@ tasks:
     init: |
       cargo clean
       cargo fetch
-      make build
+      cargo build --target wasm32-unknown-unknown --release -p soroban-hello-world-contract
       cargo test -p soroban-hello-world-contract
     # We open the `README.md` file and then clear the terminal output.
     command: |
