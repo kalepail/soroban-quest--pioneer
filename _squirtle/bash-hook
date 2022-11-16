@@ -4,6 +4,10 @@ function _sq_set_secret() {
     then
         export SOROBAN_SECRET_KEY=$(</workspace/.soroban-secret-key)
     fi
+    if [[ -f /workspace/.soroban-rpc-url ]]
+    then
+        export SOROBAN_RPC_URL=$(</workspace/.soroban-rpc-url)
+    fi
 }
 
 trap '_sq_set_secret' DEBUG
