@@ -1,7 +1,6 @@
 import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
 import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
-import { Select, Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
-import { CHAR_LEFT_ANGLE_BRACKET } from 'https://deno.land/std@0.164.0/path/_constants.ts';
+import { Select, Confirm, Input } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
 
 const runLogin = async () => {
   let env: any = await getEnv()
@@ -252,7 +251,7 @@ const autoFund = async (pk: string) => {
 }
 
 const isAccountFunded = async (pk: string): Promise<boolean> => {
-  return await fetch(`http://localhost:8000/accounts/${pk}`)
+  return await fetch(`http://127.0.0.1:8000/accounts/${pk}`)
     .then(({status}) => status === 200)
 }
 
@@ -422,6 +421,76 @@ const runSubmit = async (argv: any) => {
     })
 }
 
+const getRPCStatus = () => {
+  return fetch('http://127.0.0.1:8000')
+    .then(handleResponse)
+    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
+    .catch(() => false)
+}
+
+const pickRPCEndpoint = async () => {
+  let altNet = await Select.prompt({
+    message: "Would you like to switch to one of our official endpoints?",
+    options: [
+      { name: "No", value: "no" },
+      { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc", disabled: true },
+      { name: "Custom", value: "custom" },
+    ],
+    default: "no"
+  });
+
+  if (altNet === 'no')
+    altNet = 'http://127.0.0.1:8000/soroban/rpc'
+  
+  else if (altNet === 'custom') {
+    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
+
+    if (
+      customAltNet.length <= 'http://:65535/soroban/rpc'.length
+      || !customAltNet.includes('/soroban/rpc')
+    ) console.log(`❌ Invalid RPC endpoint`)
+    else altNet = customAltNet
+  }
+
+  await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
+}
+
+const runCheckRPC = async (argv: any) => {
+  if (argv.change)
+    return pickRPCEndpoint()
+
+  const ready = await getRPCStatus()
+
+  let statusMessage = ''
+
+  // TODO if we're ready but using a SOROBAN_RPC_URL that isn't the Gitpod's ask if we want to revert (or maybe just revert automatically?)
+
+  if (ready) {
+    statusMessage = '📡'
+
+    if (!argv.short)
+      statusMessage += ' Your local RPC endpoint is ready!'
+    
+    console.log(statusMessage)
+  } 
+  
+  else {
+    statusMessage = '⏳'
+    
+    if (!argv.short)
+      statusMessage += ' Your local RPC endpoint is not yet ready'
+
+    console.log(statusMessage)
+
+    return pickRPCEndpoint()
+  }
+}
+
 const runHelp = async () => {
   const run1 = Deno.run({
     cmd: ['sq', 'help'],
@@ -575,6 +644,15 @@ yargs(Deno.args)
       alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
+  .command('rpc', 'Check the status of your local RPC endpoint', (yargs: any) => yargs
+    .options('change', {
+      describe: 'Change the default RPC endpoint',
+      alias: ['c']
+    })
+    .options('short', {
+      describe: 'Only show the status icon',
+      alias: ['s']
+    }), runCheckRPC)
   .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
   .demandCommand(1)
