@@ -5,19 +5,6 @@ image:
 # These are the tasks that are run during the Gitpod setup. Each of the tasks
 # included will open its own terminal window where it can run.
 tasks:
-  # The "Albedo Signer" task begins a simple web app from within the Gitpod
-  # workspace that is used to communicate with the Stellar Quest backend for
-  # reward transaction signing.
-  - name: "Albedo Signer"
-    init: |
-      cd _squirtle
-      npm run compile
-    command: |
-      cd _squirtle
-      npm run bin
-      cd ../_client
-      clear
-      npm run start
   # This "Futurenet" task starts up a Stellar validator node and joins it to the
   # futurenet for you.
   - name: Futurenet
@@ -33,6 +20,20 @@ tasks:
       stellar/quickstart:soroban-dev@sha256:0993d3350148af6ffeab5dc8f0b835236b28dade6dcae77ff8a09317162f768d \
       --futurenet \
       --enable-soroban-rpc
+  # The "Albedo Signer" task begins a simple web app from within the Gitpod
+  # workspace that is used to communicate with the Stellar Quest backend for
+  # reward transaction signing.
+  - name: "Albedo Signer"
+    # We `compile` during the `init` phase, to save some time on Gitpod spinup.
+    init: |
+      cd _squirtle
+      npm run compile
+    command: |
+      cd _squirtle
+      npm run bin
+      cd ../_client
+      clear
+      npm run start
   # This "CLI - Futurenet" task opens a terminal for you to interact with the
   # futurenet network.
   - name: CLI - Futurenet
@@ -41,7 +42,7 @@ tasks:
       # This might should be set by the user.
       # This account must actually exist as a funded account on the futurenet.
       SOROBAN_SECRET_KEY: SDUOO3L7CNFXNNWSRSUCEJDKY5CLBZRI23UF6ZNXD23W5NGKJWVMGR7O
-      SOROBAN_RPC_URL: "http://localhost:8000/soroban/rpc"
+      SOROBAN_RPC_URL: "http://127.0.0.1:8000/soroban/rpc"
       SOROBAN_NETWORK_PASSPHRASE: "Test SDF Future Network ; October 2022"
     # To keep things tidy, we clear the terminal from the previous output.
     command: |
@@ -53,7 +54,7 @@ tasks:
     init: |
       cargo clean
       cargo fetch
-      make build
+      cargo build --target wasm32-unknown-unknown --release -p soroban-hello-world-contract
       cargo test -p soroban-hello-world-contract
     # We open the `README.md` file and then clear the terminal output.
     command: |
