@@ -129,15 +129,21 @@ const runUser = async (
     console.log(`   ❌ Please connect your Stellar wallet`);
   }
 
-  if (user.kyc.status === 'approved')
-    console.log(`   ✅ KYC flow has been completed`);
+  if (
+    (user.kyc.ofac ? user.kyc.ofac.replace(/\W/g, '_') === 'no_match' : true)
+    && user.kyc.status === 'approved'
+  ) console.log(`   ✅ KYC flow has been completed`);
   else {
     missing = true
     console.log(`   ❌ Please complete the KYC flow`);
   }
 
-  if (user.tax)
-    console.log(`   ✅ Tax documents have been uploaded`);
+  if (
+    user.taxStatus === 'accepted'
+    || user.taxStatus === 'pending'
+    || user.taxStatus === 'completed' 
+    || (user.taxStatus === 'requested' && user.tax) // Fix for folks with an 'accepted' TAX doc but somehow got back into a `requested' taxStatus
+  ) console.log(`   ✅ Tax documents have been uploaded`);
   else {
     missing = true
     console.log(`   ❌ Please upload your tax documents`);
