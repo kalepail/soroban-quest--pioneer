@@ -1,6 +1,6 @@
 import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
 import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
-import { Select, Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
+import { Select, Confirm, Input } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
 
 const runLogin = async () => {
   let env: any = await getEnv()
