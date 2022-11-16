@@ -422,8 +422,43 @@ const getRpcStatus = () => {
     .catch(() => false)
 }
 
-const runHorizon = async (argv: any) => {
-  const ready = false // await getRpcStatus()
+const pickRpcEndpoint = async () => {
+  let altNet = await Select.prompt({
+    message: "Would you like to switch to one of our official endpoints?",
+    options: [
+      { name: "No", value: "no" },
+      { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc", disabled: true },
+      { name: "Custom", value: "custom" },
+    ],
+    default: "no"
+  });
+
+  if (altNet === 'no')
+    altNet = 'http://127.0.0.1:8000/soroban/rpc'
+  
+  else if (altNet === 'custom') {
+    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint.\n   (remember to include the protocol, port number and /soroban/rpc path)`);
+
+    if (
+      customAltNet.length <= 'http://:65535/soroban/rpc'.length
+      || !customAltNet.includes('/soroban/rpc')
+    ) console.log(`❌ Invalid RPC URL`)
+    else altNet = customAltNet
+  }
+
+  await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
+}
+
+const runCheckRPC = async (argv: any) => {
+  if (argv.change)
+    return pickRpcEndpoint()
+
+  const ready = await getRpcStatus()
 
   let statusMessage = ''
 
@@ -433,48 +468,20 @@ const runHorizon = async (argv: any) => {
     statusMessage = '📡'
 
     if (!argv.short)
-      statusMessage += ' Your local horizon endpoint is ready!'
+      statusMessage += ' Your local RPC endpoint is ready!'
     
-      console.log(statusMessage)
+    console.log(statusMessage)
   } 
   
   else {
     statusMessage = '⏳'
     
     if (!argv.short)
-      statusMessage += ' Your local horizon endpoint is not yet ready'
+      statusMessage += ' Your local RPC endpoint is not yet ready'
 
     console.log(statusMessage)
 
-    let altNet = await Select.prompt({
-      message: "Would you like to switch to one of our official endpoints?",
-      options: [
-        { name: "No", value: "no" },
-        { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc" },
-        { name: "Custom", value: "custom" },
-      ],
-      default: "no"
-    });
-
-    if (altNet === 'no')
-      altNet = 'http://127.0.0.1:8000/soroban/rpc'
-    
-    else if (altNet === 'custom') {
-      const customAltNet = await Input.prompt(`Enter a custom RPC endpoint.\n   (remember to include the protocol, port number and /soroban/rpc path)`);
-
-      if (
-        customAltNet.length <= 'http://:65535/soroban/rpc'.length
-        || !customAltNet.includes('/soroban/rpc')
-      ) console.log(`❌ Invalid RPC URL`)
-      else altNet = customAltNet
-    }
-
-    await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
+    return pickRpcEndpoint()
   }
 }
 
@@ -631,11 +638,15 @@ yargs(Deno.args)
       alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
-  .command('horizon', 'Check status of horizon RPC', (yargs: any) => yargs
+  .command('rpc', 'Check the status of your local RPC endpoint', (yargs: any) => yargs
+    .options('change', {
+      describe: 'Change the default RPC endpoint',
+      alias: ['c']
+    })
     .options('short', {
-      describe: 'only show status icon',
+      describe: 'Only show the status icon',
       alias: ['s']
-    }), runHorizon)
+    }), runCheckRPC)
   .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
   .demandCommand(1)
