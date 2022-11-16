@@ -250,6 +250,33 @@
       } catch {}
     }
 
+    // https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number
+    function suffixMe(i) {
+      let suffix
+
+      const j = i % 10,
+            k = i % 100;
+
+      if (j == 1 && k != 11)
+        suffix = "st";
+
+      else if (j == 2 && k != 12)
+        suffix = "nd";
+
+      else if (j == 3 && k != 13)
+        suffix = "rd";
+
+      else
+        suffix = "th";
+
+      return suffix
+    }
+
+    // https://stackoverflow.com/questions/2901102/how-to-format-a-number-with-commas-as-thousands-separators
+    function commaMe(i) {
+      return i.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }
+
     function closeWindow(){
       return window.close()
     }
@@ -272,6 +299,7 @@
         isDev: null,
         apiUrl: null,
         
+        place: 0,
         amount: 0,
         badge: null,
         badgeUrl: null,
@@ -289,12 +317,13 @@
           this.apiUrl = this.isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
           this.siteUrl = this.isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
 
-          const { sub, amount, badge, network } = JSON.parse(
+          const { sub, place, amount, badge, network } = JSON.parse(
             atob(
               this.CLAIM_TOKEN.split('.')[1]
             )
           )
 
+          this.place = place ?? 0
           this.amount = amount ?? 0
           this.badge = badge
           this.badgeUrl = `${this.apiUrl}/badge/${this.badge}?v=4&network=${network.toLowerCase()}`
@@ -325,10 +354,13 @@
     </svg>      
 
     <img class="nft" :src="badgeUrl">
+
     <div x-show="amount" class="reward">
       <img src="https://quest.stellar.org/assets/imgs/coin.svg">
       <span x-text="amount"></span>
       XLM
+      <span x-text="commaMe(place) + suffixMe(place)"></span>
+      Place
     </div>
 
     <div class="desc" x-show="success">
