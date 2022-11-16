@@ -1,6 +1,6 @@
 import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
 import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
-import { Select, Confirm, Input } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
+import { Select, Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
 
 const runLogin = async () => {
   let env: any = await getEnv()
@@ -316,7 +316,7 @@ const runCheck = async (argv: any) => {
   })
   await run3.status()
 
-  const { xdr, key, network } = JSON.parse(
+  const { xdr, key, network, place, amount } = JSON.parse(
     new TextDecoder().decode(
       decode(
         claimToken.split('.')[1]
@@ -327,8 +327,21 @@ const runCheck = async (argv: any) => {
   if (!xdr) // In the case of anon or pk'less accounts
     return console.log("🎉 Correct! 🧠");
 
+  let message = "🎉 Correct!"
+
+  if (parseInt(place) >= 0) {
+    message += ` You took place ${place + 1}`
+
+    if (amount)
+      message += ` and won ${amount} XLM`
+
+    message += ` ${place <= 2 ? '🏆' : '🏅'}${amount ? '💰' : ''}`
+  }
+
+  console.log(message);
+
   const signPrompt = await Select.prompt({
-    message: "🎉 Correct! How would you like to sign your reward transaction?",
+    message: 'How would you like to sign your reward transaction?',
     options: [
       { name: "Albedo", value: "albedo" },
       { name: "Raw XDR", value: "xdr" },
