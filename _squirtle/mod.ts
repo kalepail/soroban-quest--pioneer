@@ -229,38 +229,6 @@ Secret Key: ${sk}`)
   await autoFund(pk)
 }
 
-const autoFund = async (pk: string) => {
-  const accountIsFunded = await isAccountFunded(pk)
-
-  if (accountIsFunded)
-    return
-
-  console.log('------------------------------------------')
-
-  const fundDecision = await Select.prompt({
-    message: "🏧 Do you want to fund this account now?",
-    options: [
-      { name: "💁 Yes please!", value: "yes" },
-      { name: "🙅 No thanks", value: "no" },
-    ],
-    default: "yes"
-  })
-
-  if (fundDecision == "yes")
-    return doFund(pk)
-}
-
-const isAccountFunded = async (pk: string): Promise<boolean> => {
-  return await fetch(`http://127.0.0.1:8000/accounts/${pk}`)
-    .then(({status}) => status === 200)
-}
-
-const doFund = (pk: string) => {
-  return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
-    .then(handleResponse)
-    .catch(printErrorBreak)
-}
-
 const runFund = async (argv: any) => {
   if (await isAccountFunded(argv.addr))
     return console.log('👀 Your account has already been funded.')
@@ -421,48 +389,9 @@ const runSubmit = async (argv: any) => {
     })
 }
 
-const getRPCStatus = () => {
-  return fetch('http://127.0.0.1:8000')
-    .then(handleResponse)
-    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
-    .catch(() => false)
-}
-
-const pickRPCEndpoint = async () => {
-  let altNet = await Select.prompt({
-    message: "Would you like to switch to one of our official endpoints?",
-    options: [
-      { name: "No", value: "no" },
-      { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc", disabled: true },
-      { name: "Custom", value: "custom" },
-    ],
-    default: "no"
-  });
-
-  if (altNet === 'no')
-    altNet = 'http://127.0.0.1:8000/soroban/rpc'
-  
-  else if (altNet === 'custom') {
-    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
-
-    if (
-      customAltNet.length <= 'http://:65535/soroban/rpc'.length
-      || !customAltNet.includes('/soroban/rpc')
-    ) console.log(`❌ Invalid RPC endpoint`)
-    else altNet = customAltNet
-  }
-
-  await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
-}
-
-const runCheckRPC = async (argv: any) => {
+const runRPC = async (argv: any) => {
   if (argv.change)
-    return pickRPCEndpoint()
+    return selectRPCEndpoint()
 
   const ready = await getRPCStatus()
 
@@ -487,7 +416,7 @@ const runCheckRPC = async (argv: any) => {
 
     console.log(statusMessage)
 
-    return pickRPCEndpoint()
+    return selectRPCEndpoint()
   }
 }
 
@@ -559,6 +488,77 @@ const getCheckToken = (index: number, env: any) => {
   })
     .then(handleResponse)
     .catch(printErrorBreak)
+}
+
+const autoFund = async (pk: string) => {
+  const accountIsFunded = await isAccountFunded(pk)
+
+  if (accountIsFunded)
+    return
+
+  console.log('------------------------------------------')
+
+  const fundDecision = await Select.prompt({
+    message: "🏧 Do you want to fund this account now?",
+    options: [
+      { name: "💁 Yes please!", value: "yes" },
+      { name: "🙅 No thanks", value: "no" },
+    ],
+    default: "yes"
+  })
+
+  if (fundDecision == "yes")
+    return doFund(pk)
+}
+
+const isAccountFunded = async (pk: string): Promise<boolean> => {
+  return await fetch(`http://127.0.0.1:8000/accounts/${pk}`)
+    .then(({status}) => status === 200)
+}
+
+const doFund = (pk: string) => {
+  return fetch(`https://friendbot-futurenet.stellar.org/?addr=${pk}`)
+    .then(handleResponse)
+    .catch(printErrorBreak)
+}
+
+const getRPCStatus = () => {
+  return fetch('http://127.0.0.1:8000')
+    .then(handleResponse)
+    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
+    .catch(() => false)
+}
+
+const selectRPCEndpoint = async () => {
+  let altNet = await Select.prompt({
+    message: "Would you like to switch to one of our official endpoints?",
+    options: [
+      { name: "No", value: "no" },
+      { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc", disabled: true },
+      { name: "Custom", value: "custom" },
+    ],
+    default: "no"
+  });
+
+  if (altNet === 'no')
+    altNet = 'http://127.0.0.1:8000/soroban/rpc'
+  
+  else if (altNet === 'custom') {
+    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
+
+    if (
+      customAltNet.length <= 'http://:65535/soroban/rpc'.length
+      || !customAltNet.includes('/soroban/rpc')
+    ) console.log(`❌ Invalid RPC endpoint`)
+    else altNet = customAltNet
+  }
+
+  await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
@@ -644,7 +644,7 @@ yargs(Deno.args)
       alias: ['tx'],
     })
     .demandOption(['xdr']), runSubmit)
-  .command('rpc', 'Check the status of your local RPC endpoint', (yargs: any) => yargs
+  .command(['rpc', 'horizon'], 'Check the status of your local RPC endpoint', (yargs: any) => yargs
     .options('change', {
       describe: 'Change the default RPC endpoint',
       alias: ['c']
@@ -652,7 +652,7 @@ yargs(Deno.args)
     .options('short', {
       describe: 'Only show the status icon',
       alias: ['s']
-    }), runCheckRPC)
+    }), runRPC)
   .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
   .demandCommand(1)

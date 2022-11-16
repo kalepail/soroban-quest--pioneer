@@ -5,16 +5,6 @@ image:
 # These are the tasks that are run during the Gitpod setup. Each of the tasks
 # included will open its own terminal window where it can run.
 tasks:
-  - name: "Albedo Signer"
-    init: |
-      cd _squirtle
-      npm run compile
-    command: |
-      cd _squirtle
-      npm run bin
-      cd ../_client
-      clear
-      npm run start
   # This "Futurenet" task starts up a Stellar validator node and joins it to the
   # futurenet for you.
   - name: Futurenet
@@ -30,6 +20,16 @@ tasks:
       stellar/quickstart:soroban-dev@sha256:0993d3350148af6ffeab5dc8f0b835236b28dade6dcae77ff8a09317162f768d \
       --futurenet \
       --enable-soroban-rpc
+  - name: "Albedo Signer"
+    init: |
+      cd _squirtle
+      npm run compile
+    command: |
+      cd _squirtle
+      npm run bin
+      cd ../_client
+      clear
+      npm run start
   # This "CLI - Futurenet" task opens a terminal for you to interact with the
   # futurenet network.
   - name: CLI - Futurenet
