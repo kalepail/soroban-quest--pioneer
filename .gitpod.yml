@@ -20,7 +20,11 @@ tasks:
       stellar/quickstart:soroban-dev@sha256:0993d3350148af6ffeab5dc8f0b835236b28dade6dcae77ff8a09317162f768d \
       --futurenet \
       --enable-soroban-rpc
+  # The "Albedo Signer" task begins a simple web app from within the Gitpod
+  # workspace that is used to communicate with the Stellar Quest backend for
+  # reward transaction signing.
   - name: "Albedo Signer"
+    # We `compile` during the `init` phase, to save some time on Gitpod spinup.
     init: |
       cd _squirtle
       npm run compile

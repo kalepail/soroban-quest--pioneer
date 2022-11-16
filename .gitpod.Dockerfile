@@ -4,9 +4,8 @@ FROM gitpod/workspace-full:2022-11-09-13-54-49
 # These "RUN" shell commands are run on top of the "workspace-full" image, and
 # then committed as a new image which will be used for the next steps.
 # In this chunk of "RUN" instructions, we are downloading:
-# - The Soroban CLI,
+# - The Soroban CLI
 # - sccache: a compiler cache that avoids running compiling tasks when possible
-# - cargo-hack: a cargo subcommand with useful options for testing and such
 # - cargo-watch: a tool to watch your project and run commands when files change
 # - deno: a JavaScript runtime built in Rust (we use this for the SQ cli)
 RUN mkdir -p ~/.local/bin
