@@ -1,6 +1,6 @@
 import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
 import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
-import { Select, Confirm } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
+import { Select, Confirm, Input } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
 
 const runLogin = async () => {
   let env: any = await getEnv()
@@ -402,7 +402,6 @@ const runSubmit = async (argv: any) => {
     })
 }
 
-
 const getRpcStatus = () => {
   return fetch('http://localhost:8000')
     .then(handleResponse)
@@ -410,7 +409,7 @@ const getRpcStatus = () => {
     .catch(() => false)
 }
 
-const runGetRpcStatus = async (argv: any) => {
+const runHorizon = async (argv: any) => {
   const ready = false // await getRpcStatus()
 
   let statusMessage = ''
@@ -419,32 +418,46 @@ const runGetRpcStatus = async (argv: any) => {
 
   if (ready) {
     statusMessage = '📡'
+
     if (!argv.short)
       statusMessage += ' Your local horizon endpoint is ready!'
+    
+      console.log(statusMessage)
   } else {
     statusMessage = '⏳'
+    
     if (!argv.short)
       statusMessage += ' Your local horizon endpoint is not yet ready'
 
-    const altNet = await Select.prompt({
-      message: "Would you like to continue with one of our official endpoints?",
+    console.log(statusMessage)
+
+    let altNet = await Select.prompt({
+      message: "Would you like to switch to one of our official endpoints?",
       options: [
         { name: "No", value: "no" },
-        // TODO support a write in option that if selected let's up paste in your own SOROBAN_RPC_URL endpoint (for the Kais and Overcats out there)
         { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
         { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc" },
+        { name: "Custom", value: "custom" }, // TODO support a write in option that if selected let's up paste in your own SOROBAN_RPC_URL endpoint (for the Kais and Overcats out there)
       ],
       default: "no"
     });
 
-    console.log(altNet) // TODO update the SOROBAN_RPC_URL but only in the CLI - Futurenet (may require an update to the bash-hook)
-  }
+    if (altNet === 'no')
+      return
 
-  console.log(statusMessage)
+    else {
+      if (altNet === 'custom')
+        altNet = await Input.prompt(`Enter a custom RPC endpoint.\n   (remember to include the protocol, port number and /soroban/rpc path)`);
+    }
+
+    await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
+
+    // console.log(altNet) // TODO update the SOROBAN_RPC_URL but only in the CLI - Futurenet (may require an update to the bash-hook)
+  }
 }
 
 const runHelp = async () => {
@@ -604,7 +617,7 @@ yargs(Deno.args)
     .options('short', {
       describe: 'only show status icon',
       alias: ['s']
-    }), runGetRpcStatus)
+    }), runHorizon)
   .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
   .demandCommand(1)
