@@ -415,14 +415,14 @@ const runSubmit = async (argv: any) => {
     })
 }
 
-const getRpcStatus = () => {
+const getRPCStatus = () => {
   return fetch('http://127.0.0.1:8000')
     .then(handleResponse)
     .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
     .catch(() => false)
 }
 
-const pickRpcEndpoint = async () => {
+const pickRPCEndpoint = async () => {
   let altNet = await Select.prompt({
     message: "Would you like to switch to one of our official endpoints?",
     options: [
@@ -447,7 +447,7 @@ const pickRpcEndpoint = async () => {
     if (
       customAltNet.length <= 'http://:65535/soroban/rpc'.length
       || !customAltNet.includes('/soroban/rpc')
-    ) console.log(`❌ Invalid RPC URL`)
+    ) console.log(`❌ Invalid RPC endpoint`)
     else altNet = customAltNet
   }
 
@@ -456,9 +456,9 @@ const pickRpcEndpoint = async () => {
 
 const runCheckRPC = async (argv: any) => {
   if (argv.change)
-    return pickRpcEndpoint()
+    return pickRPCEndpoint()
 
-  const ready = await getRpcStatus()
+  const ready = await getRPCStatus()
 
   let statusMessage = ''
 
@@ -481,7 +481,7 @@ const runCheckRPC = async (argv: any) => {
 
     console.log(statusMessage)
 
-    return pickRpcEndpoint()
+    return pickRPCEndpoint()
   }
 }
 
