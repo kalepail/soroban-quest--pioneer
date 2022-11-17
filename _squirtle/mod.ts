@@ -265,8 +265,15 @@ const runCheck = async (argv: any) => {
   }
 
   else if (
-    !user.tax
-    || user.kyc.status !== 'approved'
+    !(
+      user.taxStatus === 'accepted'
+      || user.taxStatus === 'pending'
+      || user.taxStatus === 'completed' 
+      || (user.taxStatus === 'requested' && user.tax)
+    ) || !(
+      (user.kyc.ofac ? user.kyc.ofac.replace(/\W/g, '_') === 'no_match' : true)
+      && user.kyc.status === 'approved'
+    )
   ) {
     const missingPkConfirmed = await Confirm.prompt(`You have not yet completed the KYC flow and/or uploaded your tax documents.
    This will affect your ability to claim XLM rewards.
