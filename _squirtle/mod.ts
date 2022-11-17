@@ -122,7 +122,9 @@ const runUser = async (
 
   let missing = false
 
-  if (user.pk)
+  if (user.isBlocked)
+    console.log(`   ❌ ${user.isBlocked === user.pk ? '' : 'Previous'} Stellar wallet (${user.isBlocked}) has been flagged`);
+  else if (user.pk)
     console.log(`   ✅ Stellar wallet ${user.pk.substring(0, 6)}...${user.pk.substring(user.pk.length - 6)} is connected`);
   else {
     missing = true
