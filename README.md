@@ -2,7 +2,7 @@
 
 ![Stellar-Quest-email](https://user-images.githubusercontent.com/4383610/200077219-de8e1f20-9878-4705-bec6-ced9a3904694.jpg)
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=prod/https://github.com/tyvdh/soroban-quest--pioneer)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][gitpod]
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -11,8 +11,8 @@
 - [Gitpod](#gitpod)
   - [VS Code](#vs-code)
   - [Terminal and Ports](#terminal-and-ports)
-    - [Terminals](#terminals)
-    - [Ports](#ports)
+    - [**Terminals**](#terminals)
+    - [**Ports**](#ports)
   - [Docker Container'd](#docker-containerd)
   - [Gitpod CLI](#gitpod-cli)
 - [Stellar Quest CLI](#stellar-quest-cli)
@@ -24,6 +24,7 @@
 - [Soroban CLI](#soroban-cli)
 - [Futurenet](#futurenet)
 - [Good Luck](#good-luck)
+- [Join us on Discord](#join-us-on-discord)
 
 ## Welcome
 
@@ -253,8 +254,34 @@ Now that you're (at least somewhat) familiar with the lay of the land, you're
 ready to get questing! Open up that Gitpod, and get to work! Most importantly,
 have fun!!
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#ENV=prod/https://github.com/tyvdh/soroban-quest--pioneer)
+## Join us on Discord
 
+We have a thriving, active, and *extremely* helpful discord community! Join the
+[Stellar Quest discord server][discord], where you'll find so many friendly
+folks who will help get you on your way! This discord server is an excellent
+place to ask questions, learn the ropes, find tools, and meet others on the same
+journey as you.
+
+In the [Stellar Developers discord server][dev-discord], you will also find a
+large, active, and helpful community! We have recently announced a $100M Soroban
+Adoption Fund, which SDF created to support the growth and development of the
+Soroban ecosystem. We'll be sharing more about additional programs on the
+Stellar Dev discord in the not-too-distant future, so make sure to join today to
+be the among the first to hear those announcements. This is yet another way for
+you to **Tinker and Earn** XLM on Soroban! Many of the people who are *creating*
+the Soroban platform are there, and willing to answer questions, too! Talk about
+"straight from the horse's mouth"!!
+
+**Please Note:** While there are people in the larger Stellar Ecosystem that are
+interested in token speculation, XLM farming, etc. these discord servers are not
+designed for those conversations. The *Stellar Quest* discord server is an
+excellent place to begin or advance your blockchain education. The *Stellar
+Developers* discord server is a great place to further your education, meet
+other developers, and build projects on the Stellar network.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][gitpod]
+
+[gitpod]: https://gitpod.io/#ENV=prod/https://github.com/tyvdh/soroban-quest--pioneer
 [gp-cli]: https://www.gitpod.io/docs/references/gitpod-cli
 [rust]: https://www.rust-lang.org/
 [cargo]: https://doc.rust-lang.org/cargo/
@@ -265,3 +292,5 @@ have fun!!
 [terminals]: https://user-images.githubusercontent.com/2024293/201201300-f86bbc98-6c0a-4189-b92c-fe4145c95f0d.png
 [vsc-docs]: https://code.visualstudio.com/docs/terminal/basics
 [ports]: https://user-images.githubusercontent.com/2024293/201206484-f69f9123-3550-49be-97f2-f6f39fe9aa2f.png
+[discord]: https://discord.gg/8FhvuKb
+[dev-discord]: https://discord.gg/stellardev
