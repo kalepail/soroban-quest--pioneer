@@ -201,6 +201,8 @@ const runPull = async () => {
     cmd: ['git', 'stash', 'pop'],
   })
   await run4.status()
+
+  await openLatestReadme()
 }
 
 const runPlay = async (argv: any) => {
@@ -435,6 +437,32 @@ const runHelp = async () => {
     cmd: ['sq', 'help'],
   })
   await run1.status()
+}
+
+const getRootDir = async () => {
+  const rootDir = String.fromCharCode(...await Deno.run({
+    cmd: ['git', 'rev-parse', '--show-toplevel'],
+    stdout: "piped",
+  }).output()).replace("\n", "")
+  return await Deno.realPath(rootDir)
+}
+
+const openLatestReadme = async () => {
+  const rootDir = await getRootDir()
+  
+  const latestReadmeRun = Deno.run({
+    cwd: rootDir,
+    cmd: ['find', 'quests', '-name', 'README.md'],
+    stdout: "piped",
+    stderr: "piped"
+  })
+  await latestReadmeRun.status()
+
+  const readme = String.fromCharCode(... await latestReadmeRun.output()).split("\n").filter(s => s !== "").reverse()[0]
+  await Deno.run({
+    cwd: rootDir,
+    cmd: ['gp', 'open', readme]
+  }).status()
 }
 
 const getEnv = async () => {
