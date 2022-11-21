@@ -299,8 +299,8 @@
         isDev: null,
         apiUrl: null,
         
-        place: 0,
-        amount: 0,
+        place: null,
+        amount: null,
         badge: null,
         badgeUrl: null,
         profileUrl: null,
@@ -323,8 +323,8 @@
             )
           )
 
-          this.place = place ?? 0
-          this.amount = amount ?? 0
+          this.place = place ?? null
+          this.amount = amount ?? null
           this.badge = badge
           this.badgeUrl = `${this.apiUrl}/badge/${this.badge}?v=4&network=${network.toLowerCase()}`
           this.profileUrl = `${this.siteUrl}/profile/${sub}`
@@ -355,11 +355,11 @@
 
     <img class="nft" :src="badgeUrl">
 
-    <div x-show="amount" class="reward">
+    <div x-show="amount && place" class="reward">
       <img src="https://quest.stellar.org/assets/imgs/coin.svg">
       <span x-text="amount"></span>
       XLM
-      <span x-text="commaMe(place) + suffixMe(place)"></span>
+      <span x-text="commaMe(place + 1) + suffixMe(place + 1)"></span>
       Place
     </div>
 
