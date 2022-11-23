@@ -340,7 +340,7 @@ const runCheck = async (argv: any) => {
     })
     const gitpodUrl = new URL(new TextDecoder().decode(await run4.output()).trim())
     gitpodUrl.searchParams.append('xdr', xdr)
-    gitpodUrl.searchParams.append('pubkey', key)
+    gitpodUrl.searchParams.append('pubkey', user.pk) // || key) // let's try this for a bit
     gitpodUrl.searchParams.append('network', network.toLowerCase())
 
     const run5 = Deno.run({
