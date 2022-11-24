@@ -426,37 +426,59 @@ const runSubmit = async (argv: any) => {
 }
 
 const runRPC = async (argv: any) => {
-  if (argv.change)
+  if (argv.change) {
     return selectRPCEndpoint()
+  }
 
-  const horizon = await getHorizonEndpoint()
-  const ready = await getRPCStatus(horizon)
-  const selectedRpcEndpoint = `${horizon}${SOROBAN_RPC_URI}`
+  const selectedHorizon = !!argv.local
+    ? LOCAL_HORIZON
+    : await getHorizonEndpoint()
 
-  let statusMessage = ''
+  if (argv.prompt || argv.name) {
+    return console.log(await getRPCPrompt(selectedHorizon, argv.name))
+  }
+
+  const {ready, status} = await getRPCStatus(new URL(selectedHorizon))
+  const selectedRpcEndpoint = new URL(SOROBAN_RPC_URI, selectedHorizon).toString()
+
+  const rpcIdentifier = !!argv.local
+    ? 'local RPC endpoint'
+    : `selected RPC endpoint (${selectedRpcEndpoint})`
+  let statusMessage = rpcEmotes[status]
 
   // TODO if we're ready but using a SOROBAN_RPC_URL that isn't the Gitpod's ask if we want to revert (or maybe just revert automatically?)
 
   if (ready) {
-    statusMessage = '📡'
-
     if (!argv.short)
-      statusMessage += ` Your selected RPC endpoint (${selectedRpcEndpoint}) is ready!`
+      statusMessage += ` Your ${rpcIdentifier} is ready!`
     
     console.log(statusMessage)
   } 
   
   else {
-    statusMessage = '⏳'
-    
     if (!argv.short)
-      statusMessage += ` Your selected RPC endpoint (${selectedRpcEndpoint}) is not yet ready`
+      statusMessage += ` Your ${rpcIdentifier} is not yet ready..`
 
     console.log(statusMessage)
 
-    if (!argv.short)
+    if (!argv.short && !argv.local)
       return selectRPCEndpoint()
   }
+}
+
+const getRPCPrompt = async (selected: string, nameOnly: boolean): Promise<string> => {
+  let horizonName = 'local'
+  if (selected !== LOCAL_HORIZON) {
+      const knownHorizon = Object.entries(knownHorizons)
+        .find(([_, value]) => value === selected)
+      horizonName = knownHorizon?knownHorizon[0]:'custom'
+  }
+
+  if (nameOnly)
+    return horizonName
+
+  const {status} = await getRPCStatus(new URL(selected)).catch(() => ({status: 'unknown'} as RPCStatus))
+  return `${horizonName} ${rpcEmotes[status]}`
 }
 
 const runHelp = async () => {
@@ -503,7 +525,7 @@ const gp = (opts: Deno.RunOptions): Promise<string> => {
 
 const getDotFilesLocation = async () => {
   const url = await gp({cmd: ['url']})
-  .catch(() => {})
+    .catch(() => "")
 
   if (url?.indexOf('gitpod.io') !== -1) {
     return '/workspace'
@@ -655,44 +677,78 @@ const doFund = (pk: string) => {
     .catch(printErrorBreak)
 }
 
-const getRPCStatus = (horizon: string) => {
+type rpcStatusCode = 'unknown'|'booting'|'catching_up'|'ready'
+type rpcStatusEmoji = '❌'|'⚙️'|'⏳'|'📡'
+const rpcEmotes: {[key in rpcStatusCode]: rpcStatusEmoji} = {
+  unknown: '❌',
+  booting: '⚙️',
+  catching_up: '⏳',
+  ready: '📡',
+}
+interface RPCStatus {
+  ready: boolean,
+  status: rpcStatusCode,
+}
+
+const getRPCStatus = (horizon: URL): Promise<RPCStatus> => {
+  let status: rpcStatusCode = 'unknown'
   return fetch(horizon)
     .then(handleResponse)
-    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
-    .catch(() => false)
+    .then(({ingest_latest_ledger, core_latest_ledger}) => {
+      if (core_latest_ledger > 0) status = 'booting'
+      if (status === 'booting' && ingest_latest_ledger > 0) status = 'catching_up'
+      // consider short before full-sync as ready to prevent status-flapping
+      if (status === 'catching_up' && ingest_latest_ledger >= core_latest_ledger-2) status = 'ready'
+      return {
+        ready: status === 'ready',
+        status,
+      }
+    })
+    .catch(() => ({ready:false, status}))
+}
+
+enum knownHorizons  {
+  KanayeNet = "https://kanaye-futurenet.stellar.quest:443",
+  nebolsin  = "https://nebolsin-futurenet.stellar.quest:443",
+  kalepail  = "https://kalepail-futurenet.stellar.quest:443",
+  silence   = "https://silence-futurenet.stellar.quest:443",
+  Raph      = "https://raph-futurenet.stellar.quest:443",
+  nesho     = "https://nesho-futurenet.stellar.quest:443",
 }
 
 const selectRPCEndpoint = async () => {
   let altNet = await Select.prompt({
     message: "Would you like to switch to one of our official endpoints?",
     options: [
-      { name: "No (use local)", value: "no" },
+      { name: "No (use local)", value: `${LOCAL_HORIZON}${SOROBAN_RPC_URI}` },
       { name: "Custom (your own)", value: "custom" },
       { name: "--------", value: '', disabled: true },
-      { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "KanayeNet", value:`${knownHorizons.KanayeNet}${SOROBAN_RPC_URI}` },
+      { name: "nebolsin", value: `${knownHorizons.nebolsin}${SOROBAN_RPC_URI}` },
+      { name: "kalepail", value: `${knownHorizons.kalepail}${SOROBAN_RPC_URI}` },
+      { name: "silence", value: `${knownHorizons.silence}${SOROBAN_RPC_URI}` },
+      { name: "Raph", value: `${knownHorizons.Raph}${SOROBAN_RPC_URI}` },
     ],
     default: "no"
   });
 
-  if (altNet === 'no')
-    altNet = `${LOCAL_HORIZON}${SOROBAN_RPC_URI}`
+  if (altNet === 'custom') {
+    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and ${SOROBAN_RPC_URI} path)`);
 
-  else if (altNet === 'custom') {
-    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
-
-    if (
-      customAltNet.length <= 'http://:65535/soroban/rpc'.length
-      || !customAltNet.includes('/soroban/rpc')
-    ) console.log(`❌ Invalid RPC endpoint`)
-    else altNet = customAltNet
+    try {
+      const customUrl = new URL(customAltNet)
+      if (['http:', 'https:'].includes(customUrl.protocol) && customUrl.pathname.includes(SOROBAN_RPC_URI)) {
+        altNet = customUrl.toString()
+      } else {
+        throw 'invalid'
+      }
+    } catch {
+      printErrorBreak(`❌ Invalid RPC endpoint`)
+    }
   }
 
   getDotFilesLocation()
-    .then((location: string) => Deno.writeFile(`${location}/.soroban-rpc-url`, new TextEncoder().encode(altNet)))
+    .then((location: string) => Deno.writeFileSync(`${location}/.soroban-rpc-url`, new TextEncoder().encode(altNet)))
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
@@ -783,8 +839,20 @@ yargs(Deno.args)
       describe: 'Change the default RPC endpoint',
       alias: ['c']
     })
+    .options('local', {
+      describe: 'check local RPC - no matter the selected RPC',
+      alias: ['l']
+    })
+    .options('name', {
+      describe: 'Only show the name of the selected endpoint (no status query)',
+      alias: ['n']
+    })
+    .options('prompt', {
+      describe: `Generate prompt status (e.g. '${rpcEmotes['ready']}local')`,
+      alias: ['p'],
+    })
     .options('short', {
-      describe: 'Only show the status icon',
+      describe: 'Only show the status icon for selected RPC',
       alias: ['s']
     }), runRPC)
   .command('*', '', {}, runHelp)
