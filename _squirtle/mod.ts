@@ -1,10 +1,14 @@
-import yargs from 'https://deno.land/x/yargs@v17.6.0-deno/deno.ts';
-import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts"
+import yargs from "https://deno.land/x/yargs@v17.6.0-deno/deno.ts";
+import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts";
+import { process } from "https://deno.land/std@0.166.0/node/process.ts";
 import { Select, Confirm, Input } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
+
+const LOCAL_HORIZON = 'http://127.0.0.1:8000'
+const SOROBAN_RPC_URI = '/soroban/rpc'
 
 const runLogin = async () => {
   let env: any = await getEnv()
-  let user
+  let user: any
 
   const { AUTH_TOKEN, ENV } = env
   const isDev = ENV !== 'prod'
@@ -24,20 +28,16 @@ const runLogin = async () => {
     });
 
     if (rulesConfirmed === 'open') {
-      const run0 = Deno.run({
-        cmd: ['gp', 'preview', '--external', 'https://quest.stellar.org/rules/series-5']
-      })
-      await run0.status()
+      await browse('https://quest.stellar.org/rules/series-5')
+      .catch(printErrorBreak)
     }
 
     if (rulesConfirmed !== 'yes') 
       return
 
-    const run1 = Deno.run({
-      cmd: ['gp', 'url', '3000'],
-      stdout: 'piped'
-    })
-    const gitpodUrl = new URL(new TextDecoder().decode(await run1.output()).trim())
+    const gitpodUrl = await gp({cmd: ['url', '3000']})
+      .then(url => new URL(url))
+      .catch(printErrorBreak)
     const discordUrl = new URL('https://discord.com/api/oauth2/authorize')
     discordUrl.searchParams.append('client_id', isDev ? '1024724391759724627' : '775714192161243161');
     discordUrl.searchParams.append('redirect_uri', `${apiUrl}/hooks/discord/code`);
@@ -46,22 +46,18 @@ const runLogin = async () => {
     discordUrl.searchParams.append('prompt', 'consent');
     discordUrl.searchParams.append('state', gitpodUrl.toString());
 
-    const run2 = Deno.run({
-      cmd: ['gp', 'preview', '--external', discordUrl.toString()]
-    })
-    await run2.status()
+    await browse(discordUrl.toString())
+      .catch(console.warn)
 
     // await until gp env includes AUTH_TOKEN (or timeout after 5 minutes??)
-    await new Promise((resolve) => {
+    user = await new Promise((resolve) => {
       const interval = setInterval(async () => {
         env = await getEnv()
-
         const { AUTH_TOKEN } = env
 
         if (AUTH_TOKEN) {
           clearInterval(interval)
-          resolve(true)
-          user = await getUser(env)
+          resolve(getUser(env))
         }
       }, 5000)
     })
@@ -70,29 +66,74 @@ const runLogin = async () => {
   await runUser(null, user, env)
 }
 
+const browse = (location: string): Promise<Deno.ProcessStatus> => {
+  return new Promise<Deno.ProcessStatus>((resolve, reject) => {
+    switch(process.platform) {
+      case 'linux':
+        gp({
+          cmd: ['preview', '--external', location],
+          stderr: 'null',
+          stdout: 'null',
+        })
+        .then(() => resolve({success: true, code: 0}))
+        .catch(() => {})
+        /* falls through in case 'gp' is not available */
+      case 'aix':
+      case 'freebsd':
+      case 'openbsd':
+        return Deno.run({
+          cmd: ['xdg-open', location],
+          stderr: 'null',
+          stdout: 'null',
+        }).status()
+        .then(resolve)
+        .catch(reject)
+      case 'darwin':
+        return Deno.run({
+          cmd: ['open', location],
+          stderr: 'null',
+          stdout: 'null',
+        }).status()
+        .then(resolve)
+        .catch(reject)
+      case 'win32':
+        return Deno.run({
+          cmd: ['cmd', '/c', 'start', location],
+          stderr: 'null',
+          stdout: 'null',
+        }).status()
+        .then(resolve)
+        .catch(reject)
+    }
+  })
+}
+
 const runLogout = async (
   _: any, 
   internal = false
 ) => {
-  const run1 = Deno.run({
-    cmd: ['gp', 'env', '-u', 'AUTH_TOKEN'],
+  const { AUTH_TOKEN, ENV } = await getEnv()
+  if (!AUTH_TOKEN)
+    return
+  const run1 = gp({
+    cmd: ['env', '-u', 'AUTH_TOKEN'],
   })
-  const run2 = Deno.run({
-    cmd: ['gp', 'env', '-u', 'ACCESS_TOKEN'],
+  const run2 = gp({
+    cmd: ['env', '-u', 'ACCESS_TOKEN'],
   })
-  const run3 = Deno.run({
-    cmd: ['gp', 'env', '-u', 'CLAIM_TOKEN'],
+  const run3 = gp({
+    cmd: ['env', '-u', 'CLAIM_TOKEN'],
   })
-  const run4 = Deno.run({
-    cmd: ['gp', 'env', '-u', 'REFRESH_TOKEN'],
+  const run4 = gp({
+    cmd: ['env', '-u', 'REFRESH_TOKEN'],
   })
 
   await Promise.all([
-    run1.status(),
-    run2.status(),
-    run3.status(),
-    run4.status(),
-  ])
+    run1,
+    run2,
+    run3,
+    run4,
+  ]).catch(() => {})
 
   if (!internal)
     console.log('👋 Bye bye');
@@ -166,10 +207,7 @@ const runUser = async (
     if (!missingConfirmed)
       return
 
-    const run1 = Deno.run({
-      cmd: ['gp', 'preview', '--external', `${siteUrl}/settings`]
-    })
-    await run1.status()
+    await browse(`${siteUrl}/settings`)
   }
 }
 
@@ -180,10 +218,7 @@ const runOpen = async () => {
   const isDev = ENV !== 'prod'
   const siteUrl = isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
 
-  const run1 = Deno.run({
-    cmd: ['gp', 'preview', '--external', siteUrl]
-  })
-  return run1.status()
+  browse(siteUrl)
 }
 
 const runPull = async () => {
@@ -227,7 +262,8 @@ const runPlay = async (argv: any) => {
     )
   )
 
-  await Deno.writeFile("/workspace/.soroban-secret-key", new TextEncoder().encode(sk))
+  await getDotFilesLocation()
+    .then((location: string) => Deno.writeFile(location + "/.soroban-secret-key", new TextEncoder().encode(sk)))
 
   console.log(`🔐 Quest Keypair for Stellar Quest Series 5 Quest ${argv.index}
 ✅ SOROBAN_SECRET_KEY environment variable has been updated
@@ -264,10 +300,7 @@ const runCheck = async (argv: any) => {
    Would you like to connect your Stellar wallet?`);
 
     if (missingPkConfirmed) {
-      const run1 = Deno.run({
-        cmd: ['gp', 'preview', '--external', `${siteUrl}/settings`]
-      })
-      return run1.status()
+      return browse(`${siteUrl}/settings`)
     }
   }
 
@@ -287,10 +320,7 @@ const runCheck = async (argv: any) => {
    Would you like to complete your Stellar Quest account?`);
 
     if (missingPkConfirmed) {
-      const run2 = Deno.run({
-        cmd: ['gp', 'preview', '--external', `${siteUrl}/settings`]
-      })
-      return run2.status()
+      return browse(`${siteUrl}/settings`)
     }
   }
 
@@ -300,11 +330,9 @@ const runCheck = async (argv: any) => {
   if (!claimToken) // No claim token but also no error, you've already solved
     return console.log("🎉 Correct! 🧠");
 
-  const run3 = Deno.run({
-    cmd: ['gp', 'env', `CLAIM_TOKEN=${claimToken}`],
-    stdout: 'null'
+  await gp({
+    cmd: ['env', `CLAIM_TOKEN=${claimToken}`]
   })
-  await run3.status()
 
   const { xdr, key, network, place, amount } = JSON.parse(
     new TextDecoder().decode(
@@ -339,19 +367,14 @@ const runCheck = async (argv: any) => {
   });
 
   if (signPrompt === 'albedo') {
-    const run4 = Deno.run({
-      cmd: ['gp', 'url', '3000'],
-      stdout: 'piped'
-    })
-    const gitpodUrl = new URL(new TextDecoder().decode(await run4.output()).trim())
+    const gitpodUrl = await gp({cmd: ['url', '3000']})
+      .then(url => new URL(url))
+      .catch(printErrorBreak)
     gitpodUrl.searchParams.append('xdr', xdr)
     gitpodUrl.searchParams.append('pubkey', user.pk) // || key) // let's try this for a bit
     gitpodUrl.searchParams.append('network', network.toLowerCase())
 
-    const run5 = Deno.run({
-      cmd: ['gp', 'preview', '--external', gitpodUrl.toString()]
-    })
-    return run5.status()
+    return browse(gitpodUrl.toString())
   }
 
   else if (signPrompt === 'xdr') {
@@ -385,11 +408,7 @@ const runSubmit = async (argv: any) => {
       const { claimToken } = err
 
       if (claimToken) {
-        const run1 = Deno.run({
-          cmd: ['gp', 'env', `CLAIM_TOKEN=${claimToken}`],
-          stdout: 'null'
-        })
-        await run1.status()
+        await gp({cmd: ['env', `CLAIM_TOKEN=${claimToken}`]})
 
         const { xdr } = JSON.parse(
           new TextDecoder().decode(
@@ -409,7 +428,9 @@ const runRPC = async (argv: any) => {
   if (argv.change)
     return selectRPCEndpoint()
 
-  const ready = await getRPCStatus()
+  const horizon = await getHorizonEndpoint()
+  const ready = await getRPCStatus(horizon)
+  const selectedRpcEndpoint = horizon + SOROBAN_RPC_URI
 
   let statusMessage = ''
 
@@ -419,7 +440,7 @@ const runRPC = async (argv: any) => {
     statusMessage = '📡'
 
     if (!argv.short)
-      statusMessage += ' Your local RPC endpoint is ready!'
+      statusMessage += ` Your selected RPC endpoint (${selectedRpcEndpoint}) is ready!`
     
     console.log(statusMessage)
   } 
@@ -428,7 +449,7 @@ const runRPC = async (argv: any) => {
     statusMessage = '⏳'
     
     if (!argv.short)
-      statusMessage += ' Your local RPC endpoint is not yet ready'
+      statusMessage += ` Your selected RPC endpoint (${selectedRpcEndpoint}) is not yet ready`
 
     console.log(statusMessage)
 
@@ -444,38 +465,85 @@ const runHelp = async () => {
   await run1.status()
 }
 
+const gp = (opts: Deno.RunOptions): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const cmd: readonly string[] = ['gp', ...(opts.cmd as string[]??[])]
+      const runOpts = {
+        cmd,
+        cwd: opts.cwd,
+        stdout: opts.stdout??'piped',
+        stderr: opts.stderr??'piped',
+      }
+      const gpProcess = Deno.run(runOpts)
+      Promise.all([
+        gpProcess.status(),
+        runOpts.stdout === 'piped' ? gpProcess.output() : undefined,
+        runOpts.stderr === 'piped' ? gpProcess.stderrOutput() : undefined,
+      ])
+      .then(([status, stdout, stderr]) => {
+        if (status.success) {
+          resolve(new TextDecoder().decode(stdout).trim())
+        } else {
+          reject({...status, stderr: new TextDecoder().decode(stderr)})
+        }
+      })
+      .finally(() => {
+        gpProcess.close();
+      })
+    } catch (e) {
+      if (e == 'NotFound: No such file or directory (os error 2)') {
+        reject("command 'gp' is only available in a gitpod")
+      }
+      reject(e)
+    }
+  })
+}
+
+const getDotFilesLocation = async () => {
+  const url = await gp({cmd: ['url']})
+    .catch(() => false)
+
+  if (typeof url === 'string' && url.indexOf('gitpod.io') !== -1) {
+    return '/workspace'
+  }
+
+  return await getRootDir()
+}
+
 const getRootDir = async () => {
-  const rootDir = String.fromCharCode(...await Deno.run({
+  return await Deno.run({
     cmd: ['git', 'rev-parse', '--show-toplevel'],
     stdout: "piped",
-  }).output()).replace("\n", "")
-  return await Deno.realPath(rootDir)
+  })
+  .output()
+  .then((path: BufferSource) => new TextDecoder().decode(path).trim())
+  .then((path: string) => Deno.realPathSync(path))
 }
 
 const openLatestReadme = async () => {
   const rootDir = await getRootDir()
   
-  const latestReadmeRun = Deno.run({
+  const latestReadme = await Deno.run({
     cwd: rootDir,
     cmd: ['find', 'quests', '-name', 'README.md'],
     stdout: "piped",
-    stderr: "piped"
   })
-  await latestReadmeRun.status()
+  .output()
+  .then((output: BufferSource) => new TextDecoder().decode(output)
+    .trim()
+    .split("\n")
+    .pop()??'')
 
-  const readme = String.fromCharCode(... await latestReadmeRun.output()).split("\n").filter(s => s !== "").reverse()[0]
-  await Deno.run({
+  await gp({
     cwd: rootDir,
-    cmd: ['gp', 'open', readme]
-  }).status()
+    cmd: ['open', latestReadme],
+  }).catch(() => {})
 }
 
 const getEnv = async () => {
-  const run1 = Deno.run({
-    cmd: ['gp', 'env'],
-    stdout: 'piped'
-  })
-  const gpEnvString = new TextDecoder().decode(await run1.output()).trim()
+  const gpEnvString = await gp({cmd: ['env']})
+    .catch(() => "")
 
   const run2 = Deno.run({
     cmd: ['env'],
@@ -566,8 +634,17 @@ const autoFund = async (pk: string) => {
     return doFund(pk)
 }
 
+const getHorizonEndpoint = (): Promise<string> => {
+  return getDotFilesLocation()
+    .then((location: string) => Deno.readFile(location + "/.soroban-rpc-url"))
+    .then((source: BufferSource) => new TextDecoder().decode(source))
+    .then(url => url.replace(new RegExp(`${SOROBAN_RPC_URI}$`, 'g'), ""))
+    .catch(() => LOCAL_HORIZON)
+}
+
 const isAccountFunded = async (pk: string): Promise<boolean> => {
-  return await fetch(`http://127.0.0.1:8000/accounts/${pk}`)
+  return await getHorizonEndpoint()
+    .then(horizon => fetch(`${horizon}/accounts/${pk}`))
     .then(({status}) => status === 200)
 }
 
@@ -577,8 +654,8 @@ const doFund = (pk: string) => {
     .catch(printErrorBreak)
 }
 
-const getRPCStatus = () => {
-  return fetch('http://127.0.0.1:8000')
+const getRPCStatus = (horizon: string) => {
+  return fetch(horizon)
     .then(handleResponse)
     .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
     .catch(() => false)
@@ -601,8 +678,8 @@ const selectRPCEndpoint = async () => {
   });
 
   if (altNet === 'no')
-    altNet = 'http://127.0.0.1:8000/soroban/rpc'
-  
+    altNet = LOCAL_HORIZON+SOROBAN_RPC_URI
+
   else if (altNet === 'custom') {
     const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
 
@@ -613,7 +690,8 @@ const selectRPCEndpoint = async () => {
     else altNet = customAltNet
   }
 
-  await Deno.writeFile("/workspace/.soroban-rpc-url", new TextEncoder().encode(altNet))
+  getDotFilesLocation()
+    .then((location: string) => Deno.writeFile(location + "/.soroban-rpc-url", new TextEncoder().encode(altNet)))
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
