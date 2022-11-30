@@ -123,7 +123,12 @@ const runUser = async (
   let missing = false
 
   if (user.isBlocked)
-    console.log(`   ❌${user.isBlocked === user.pk ? '' : ' Previous'} Stellar wallet (${user.isBlocked}) has been flagged`);
+    if (user.isBlocked.length === 56)
+      console.log(`   ❌${user.isBlocked === user.pk ? '' : ' Previous'} Stellar wallet (${user.isBlocked}) has been flagged`);
+    else if (user.isBlocked === user.sub)
+      console.log(`   ❌ Your account (${user.isBlocked}) has been flagged`);
+    else
+      console.log(`   ❌ You have been flagged`);
   else if (user.pk)
     console.log(`   ✅ Stellar wallet ${user.pk.substring(0, 6)}...${user.pk.substring(user.pk.length - 6)} is connected`);
   else {
@@ -501,12 +506,24 @@ const getUser = (env: any) => {
   const isDev = ENV !== 'prod'
   const apiUrl = isDev ? 'https://api-dev.stellar.quest' : 'https://api.stellar.quest'
 
+  const { sub } = JSON.parse(
+    new TextDecoder().decode(
+      decode(
+        AUTH_TOKEN.split('.')[1]
+      )
+    )
+  )
+
   return fetch(`${apiUrl}/user`, { 
     headers: {
       'Authorization': `Bearer ${AUTH_TOKEN}`
     }
   })
     .then(handleResponse)
+    .then((res) => ({
+      sub,
+      ...res
+    }))
     .catch(async (err) => {
       await runLogout(null, true)
       printErrorBreak(err)

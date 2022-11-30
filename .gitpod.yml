@@ -47,6 +47,7 @@ tasks:
     # To keep things tidy, we clear the terminal from the previous output.
     command: |
       source _squirtle/bash-hook
+      source _squirtle/bash-rpc-prompt
       clear
   # This "CLI - Sandbox" task provides a place to run contracts in a local
   # sandbox environment. We need to invoke `cargo fetch` several times /shrug.
