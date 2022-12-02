@@ -1,6 +1,6 @@
 import yargs from "https://deno.land/x/yargs@v17.6.0-deno/deno.ts";
 import { decode } from "https://deno.land/std@0.161.0/encoding/base64.ts";
-import { process } from "https://deno.land/std@0.166.0/node/process.ts";
+// import { process } from "https://deno.land/std@0.166.0/node/process.ts";
 import { Select, Confirm, Input } from "https://deno.land/x/cliffy@v0.25.4/prompt/mod.ts";
 
 const LOCAL_HORIZON = 'http://127.0.0.1:8000'
@@ -38,6 +38,7 @@ const runLogin = async () => {
     const gitpodUrl = await gp({cmd: ['url', '3000']})
       .then(url => new URL(url))
       .catch(printErrorBreak)
+
     const discordUrl = new URL('https://discord.com/api/oauth2/authorize')
     discordUrl.searchParams.append('client_id', isDev ? '1024724391759724627' : '775714192161243161');
     discordUrl.searchParams.append('redirect_uri', `${apiUrl}/hooks/discord/code`);
@@ -47,7 +48,6 @@ const runLogin = async () => {
     discordUrl.searchParams.append('state', gitpodUrl.toString());
 
     await browse(discordUrl.toString())
-      .catch(console.warn)
 
     // await until gp env includes AUTH_TOKEN (or timeout after 5 minutes??)
     user = await new Promise((resolve) => {
@@ -68,43 +68,44 @@ const runLogin = async () => {
 
 const browse = (location: string): Promise<Deno.ProcessStatus> => {
   return new Promise<Deno.ProcessStatus>((resolve, reject) => {
-    switch(process.platform) {
-      case 'linux':
-        gp({
+    // switch(process.platform) {
+    //   case 'linux':
+        return gp({
           cmd: ['preview', '--external', location],
           stderr: 'null',
           stdout: 'null',
         })
         .then(() => resolve({success: true, code: 0}))
-        .catch(() => {})
+        .catch(reject)
+        // .catch(() => {})
         /* falls through in case 'gp' is not available */
-      case 'aix':
-      case 'freebsd':
-      case 'openbsd':
-        return Deno.run({
-          cmd: ['xdg-open', location],
-          stderr: 'null',
-          stdout: 'null',
-        }).status()
-        .then(resolve)
-        .catch(reject)
-      case 'darwin':
-        return Deno.run({
-          cmd: ['open', location],
-          stderr: 'null',
-          stdout: 'null',
-        }).status()
-        .then(resolve)
-        .catch(reject)
-      case 'win32':
-        return Deno.run({
-          cmd: ['cmd', '/c', 'start', location],
-          stderr: 'null',
-          stdout: 'null',
-        }).status()
-        .then(resolve)
-        .catch(reject)
-    }
+      // case 'aix':
+      // case 'freebsd':
+      // case 'openbsd':
+      //   return Deno.run({
+      //     cmd: ['xdg-open', location],
+      //     stderr: 'null',
+      //     stdout: 'null',
+      //   }).status()
+      //   .then(resolve)
+      //   .catch(reject)
+      // case 'darwin':
+      //   return Deno.run({
+      //     cmd: ['open', location],
+      //     stderr: 'null',
+      //     stdout: 'null',
+      //   }).status()
+      //   .then(resolve)
+      //   .catch(reject)
+      // case 'win32':
+      //   return Deno.run({
+      //     cmd: ['cmd', '/c', 'start', location],
+      //     stderr: 'null',
+      //     stdout: 'null',
+      //   }).status()
+      //   .then(resolve)
+      //   .catch(reject)
+    // }
   })
 }
 
@@ -263,7 +264,7 @@ const runPlay = async (argv: any) => {
   )
 
   await getDotFilesLocation()
-    .then((location: string) => Deno.writeFile(location + "/.soroban-secret-key", new TextEncoder().encode(sk)))
+    .then((location: string) => Deno.writeFile(`${location}/.soroban-secret-key`, new TextEncoder().encode(sk)))
 
   console.log(`🔐 Quest Keypair for Stellar Quest Series 5 Quest ${argv.index}
 ✅ SOROBAN_SECRET_KEY environment variable has been updated
@@ -430,7 +431,7 @@ const runRPC = async (argv: any) => {
 
   const horizon = await getHorizonEndpoint()
   const ready = await getRPCStatus(horizon)
-  const selectedRpcEndpoint = horizon + SOROBAN_RPC_URI
+  const selectedRpcEndpoint = `${horizon}${SOROBAN_RPC_URI}`
 
   let statusMessage = ''
 
@@ -502,9 +503,9 @@ const gp = (opts: Deno.RunOptions): Promise<string> => {
 
 const getDotFilesLocation = async () => {
   const url = await gp({cmd: ['url']})
-    .catch(() => false)
+  .catch(() => {})
 
-  if (typeof url === 'string' && url.indexOf('gitpod.io') !== -1) {
+  if (url?.indexOf('gitpod.io') !== -1) {
     return '/workspace'
   }
 
@@ -636,7 +637,7 @@ const autoFund = async (pk: string) => {
 
 const getHorizonEndpoint = (): Promise<string> => {
   return getDotFilesLocation()
-    .then((location: string) => Deno.readFile(location + "/.soroban-rpc-url"))
+    .then((location: string) => Deno.readFile(`${location}/.soroban-rpc-url`))
     .then((source: BufferSource) => new TextDecoder().decode(source))
     .then(url => url.replace(new RegExp(`${SOROBAN_RPC_URI}$`, 'g'), ""))
     .catch(() => LOCAL_HORIZON)
@@ -678,7 +679,7 @@ const selectRPCEndpoint = async () => {
   });
 
   if (altNet === 'no')
-    altNet = LOCAL_HORIZON+SOROBAN_RPC_URI
+    altNet = `${LOCAL_HORIZON}${SOROBAN_RPC_URI}`
 
   else if (altNet === 'custom') {
     const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
@@ -691,7 +692,7 @@ const selectRPCEndpoint = async () => {
   }
 
   getDotFilesLocation()
-    .then((location: string) => Deno.writeFile(location + "/.soroban-rpc-url", new TextEncoder().encode(altNet)))
+    .then((location: string) => Deno.writeFile(`${location}/.soroban-rpc-url`, new TextEncoder().encode(altNet)))
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
