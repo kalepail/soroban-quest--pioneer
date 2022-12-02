@@ -666,14 +666,14 @@ const selectRPCEndpoint = async () => {
   let altNet = await Select.prompt({
     message: "Would you like to switch to one of our official endpoints?",
     options: [
-      { name: "No", value: "no" },
+      { name: "No (use local)", value: "no" },
+      { name: "Custom (your own)", value: "custom" },
+      { name: "--------", value: '', disabled: true },
       { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
       { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
       { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
       { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
       { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "nesho", value: "https://nesho-futurenet.stellar.quest:443/soroban/rpc", disabled: true },
-      { name: "Custom", value: "custom" },
     ],
     default: "no"
   });
