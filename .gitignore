@@ -2,5 +2,8 @@
 target
 .sccache
 .soroban
+.soroban-rpc-url
+.soroban-secret-key
+_squirtle/sq
 node_modules
 *bundle*
