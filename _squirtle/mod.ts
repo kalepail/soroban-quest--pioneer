@@ -425,8 +425,8 @@ const runSubmit = async (argv: any) => {
     })
 }
 
-const runRPC = async (argv: any) => {
-  if (argv.change) {
+const runRPC = async (argv: any, selectOnNotReady = true) => {
+  if (argv?.change) {
     return selectRPCEndpoint()
   }
 
@@ -448,7 +448,8 @@ const runRPC = async (argv: any) => {
     statusMessage += ` Your ${rpcIdentifier} is not yet ready`
     console.log(statusMessage)
 
-    return selectRPCEndpoint()
+    if (selectOnNotReady)
+      return selectRPCEndpoint()
   }
 }
 
@@ -723,7 +724,12 @@ const selectRPCEndpoint = async () => {
   }
 
   getDotFilesLocation()
-    .then((location: string) => Deno.writeFileSync(`${location}/.soroban-rpc-url`, new TextEncoder().encode(altNet)))
+    .then((location: string) => Deno.writeFileSync(
+      `${location}/.soroban-rpc-url`, 
+      new TextEncoder().encode(altNet)
+    ))
+
+  runRPC(null, false)
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
