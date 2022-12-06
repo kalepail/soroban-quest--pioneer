@@ -29,13 +29,13 @@ const runLogin = async () => {
 
     if (rulesConfirmed === 'open') {
       await browse('https://quest.stellar.org/rules/series-5')
-      .catch(printErrorBreak)
+        .catch(printErrorBreak)
     }
 
-    if (rulesConfirmed !== 'yes') 
+    if (rulesConfirmed !== 'yes')
       return
 
-    const gitpodUrl = await gp({cmd: ['url', '3000']})
+    const gitpodUrl = await gp({ cmd: ['url', '3000'] })
       .then(url => new URL(url))
       .catch(printErrorBreak)
 
@@ -70,47 +70,47 @@ const browse = (location: string): Promise<Deno.ProcessStatus> => {
   return new Promise<Deno.ProcessStatus>((resolve, reject) => {
     // switch(process.platform) {
     //   case 'linux':
-        return gp({
-          cmd: ['preview', '--external', location],
-          stderr: 'null',
-          stdout: 'null',
-        })
-        .then(() => resolve({success: true, code: 0}))
-        .catch(reject)
-        // .catch(() => {})
-        /* falls through in case 'gp' is not available */
-      // case 'aix':
-      // case 'freebsd':
-      // case 'openbsd':
-      //   return Deno.run({
-      //     cmd: ['xdg-open', location],
-      //     stderr: 'null',
-      //     stdout: 'null',
-      //   }).status()
-      //   .then(resolve)
-      //   .catch(reject)
-      // case 'darwin':
-      //   return Deno.run({
-      //     cmd: ['open', location],
-      //     stderr: 'null',
-      //     stdout: 'null',
-      //   }).status()
-      //   .then(resolve)
-      //   .catch(reject)
-      // case 'win32':
-      //   return Deno.run({
-      //     cmd: ['cmd', '/c', 'start', location],
-      //     stderr: 'null',
-      //     stdout: 'null',
-      //   }).status()
-      //   .then(resolve)
-      //   .catch(reject)
+    return gp({
+      cmd: ['preview', '--external', location],
+      stderr: 'null',
+      stdout: 'null',
+    })
+      .then(() => resolve({ success: true, code: 0 }))
+      .catch(reject)
+    // .catch(() => {})
+    /* falls through in case 'gp' is not available */
+    // case 'aix':
+    // case 'freebsd':
+    // case 'openbsd':
+    //   return Deno.run({
+    //     cmd: ['xdg-open', location],
+    //     stderr: 'null',
+    //     stdout: 'null',
+    //   }).status()
+    //   .then(resolve)
+    //   .catch(reject)
+    // case 'darwin':
+    //   return Deno.run({
+    //     cmd: ['open', location],
+    //     stderr: 'null',
+    //     stdout: 'null',
+    //   }).status()
+    //   .then(resolve)
+    //   .catch(reject)
+    // case 'win32':
+    //   return Deno.run({
+    //     cmd: ['cmd', '/c', 'start', location],
+    //     stderr: 'null',
+    //     stdout: 'null',
+    //   }).status()
+    //   .then(resolve)
+    //   .catch(reject)
     // }
   })
 }
 
 const runLogout = async (
-  _: any, 
+  _: any,
   internal = false
 ) => {
   const { AUTH_TOKEN, ENV } = await getEnv()
@@ -134,7 +134,7 @@ const runLogout = async (
     run2,
     run3,
     run4,
-  ]).catch(() => {})
+  ]).catch(() => { })
 
   if (!internal)
     console.log('👋 Bye bye');
@@ -190,7 +190,7 @@ const runUser = async (
   if (
     user.taxStatus === 'accepted'
     || user.taxStatus === 'pending'
-    || user.taxStatus === 'completed' 
+    || user.taxStatus === 'completed'
     || (user.taxStatus === 'requested' && user.tax) // Fix for folks with an 'accepted' TAX doc but somehow got back into a `requested' taxStatus
   ) console.log(`   ✅ Tax documents have been uploaded`);
   else {
@@ -298,7 +298,7 @@ const runCheck = async (argv: any) => {
   const { ENV } = env
   const isDev = ENV !== 'prod'
   const siteUrl = isDev ? 'https://quest-dev.stellar.org' : 'https://quest.stellar.org'
-  
+
   if (!user.pk) {
     const missingPkConfirmed = await Confirm.prompt(`You have not yet connected your Stellar wallet. 
    This will affect your ability to claim NFT and XLM rewards.
@@ -313,7 +313,7 @@ const runCheck = async (argv: any) => {
     !(
       user.taxStatus === 'accepted'
       || user.taxStatus === 'pending'
-      || user.taxStatus === 'completed' 
+      || user.taxStatus === 'completed'
       || (user.taxStatus === 'requested' && user.tax)
     ) || !(
       (user.kyc.ofac ? user.kyc.ofac.replace(/\W/g, '_') === 'no_match' : true)
@@ -372,7 +372,7 @@ const runCheck = async (argv: any) => {
   });
 
   if (signPrompt === 'albedo') {
-    const gitpodUrl = await gp({cmd: ['url', '3000']})
+    const gitpodUrl = await gp({ cmd: ['url', '3000'] })
       .then(url => new URL(url))
       .catch(printErrorBreak)
     gitpodUrl.searchParams.append('xdr', xdr)
@@ -413,7 +413,7 @@ const runSubmit = async (argv: any) => {
       const { claimToken } = err
 
       if (claimToken) {
-        await gp({cmd: ['env', `CLAIM_TOKEN=${claimToken}`]})
+        await gp({ cmd: ['env', `CLAIM_TOKEN=${claimToken}`] })
 
         const { xdr } = JSON.parse(
           new TextDecoder().decode(
@@ -429,36 +429,30 @@ const runSubmit = async (argv: any) => {
     })
 }
 
-const runRPC = async (argv: any) => {
-  if (argv.change)
+const runRPC = async (argv: any, selectOnNotReady = true) => {
+  if (argv?.change) {
     return selectRPCEndpoint()
+  }
 
-  const horizon = await getHorizonEndpoint()
-  const ready = await getRPCStatus(horizon)
-  const selectedRpcEndpoint = `${horizon}${SOROBAN_RPC_URI}`
+  const selectedHorizon = await getHorizonEndpoint()
+  const selectedRpcEndpoint = new URL(SOROBAN_RPC_URI, selectedHorizon).toString()
+  const rpcIdentifier = `selected RPC endpoint (${selectedRpcEndpoint})`
+  const { ready, status } = await getRPCStatus(new URL(selectedHorizon))
 
-  let statusMessage = ''
+  let statusMessage = rpcEmotes[status]
 
   // TODO if we're ready but using a SOROBAN_RPC_URL that isn't the Gitpod's ask if we want to revert (or maybe just revert automatically?)
 
   if (ready) {
-    statusMessage = '📡'
-
-    if (!argv.short)
-      statusMessage += ` Your selected RPC endpoint (${selectedRpcEndpoint}) is ready!`
-    
+    statusMessage += ` Your ${rpcIdentifier} is ready!`
     console.log(statusMessage)
-  } 
-  
+  }
+
   else {
-    statusMessage = '⏳'
-    
-    if (!argv.short)
-      statusMessage += ` Your selected RPC endpoint (${selectedRpcEndpoint}) is not yet ready`
-
+    statusMessage += ` Your ${rpcIdentifier} is not yet ready`
     console.log(statusMessage)
 
-    if (!argv.short)
+    if (selectOnNotReady)
       return selectRPCEndpoint()
   }
 }
@@ -473,12 +467,12 @@ const runHelp = async () => {
 const gp = (opts: Deno.RunOptions): Promise<string> => {
   return new Promise((resolve, reject) => {
     try {
-      const cmd: readonly string[] = ['gp', ...(opts.cmd as string[]??[])]
+      const cmd: readonly string[] = ['gp', ...(opts.cmd as string[] ?? [])]
       const runOpts = {
         cmd,
         cwd: opts.cwd,
-        stdout: opts.stdout??'piped',
-        stderr: opts.stderr??'piped',
+        stdout: opts.stdout ?? 'piped',
+        stderr: opts.stderr ?? 'piped',
       }
       const gpProcess = Deno.run(runOpts)
       Promise.all([
@@ -486,16 +480,16 @@ const gp = (opts: Deno.RunOptions): Promise<string> => {
         runOpts.stdout === 'piped' ? gpProcess.output() : undefined,
         runOpts.stderr === 'piped' ? gpProcess.stderrOutput() : undefined,
       ])
-      .then(([status, stdout, stderr]) => {
-        if (status.success) {
-          resolve(new TextDecoder().decode(stdout).trim())
-        } else {
-          reject({...status, stderr: new TextDecoder().decode(stderr)})
-        }
-      })
-      .finally(() => {
-        gpProcess.close();
-      })
+        .then(([status, stdout, stderr]) => {
+          if (status.success) {
+            resolve(new TextDecoder().decode(stdout).trim())
+          } else {
+            reject({ ...status, stderr: new TextDecoder().decode(stderr) })
+          }
+        })
+        .finally(() => {
+          gpProcess.close();
+        })
     } catch (e) {
       if (e == 'NotFound: No such file or directory (os error 2)') {
         reject("command 'gp' is only available in a gitpod")
@@ -506,8 +500,8 @@ const gp = (opts: Deno.RunOptions): Promise<string> => {
 }
 
 const getDotFilesLocation = async () => {
-  const url = await gp({cmd: ['url']})
-  .catch(() => {})
+  const url = await gp({ cmd: ['url'] })
+    .catch(() => "")
 
   if (url?.indexOf('gitpod.io') !== -1) {
     return '/workspace'
@@ -521,33 +515,33 @@ const getRootDir = async () => {
     cmd: ['git', 'rev-parse', '--show-toplevel'],
     stdout: "piped",
   })
-  .output()
-  .then((path: BufferSource) => new TextDecoder().decode(path).trim())
-  .then((path: string) => Deno.realPathSync(path))
+    .output()
+    .then((path: BufferSource) => new TextDecoder().decode(path).trim())
+    .then((path: string) => Deno.realPathSync(path))
 }
 
 const openLatestReadme = async () => {
   const rootDir = await getRootDir()
-  
+
   const latestReadme = await Deno.run({
     cwd: rootDir,
     cmd: ['find', 'quests', '-maxdepth', '2', '-name', 'README.md'],
     stdout: "piped",
   })
-  .output()
-  .then((output: BufferSource) => new TextDecoder().decode(output)
-    .trim()
-    .split("\n")
-    .pop()??'')
+    .output()
+    .then((output: BufferSource) => new TextDecoder().decode(output)
+      .trim()
+      .split("\n")
+      .pop() ?? '')
 
   await gp({
     cwd: rootDir,
     cmd: ['open', latestReadme],
-  }).catch(() => {})
+  }).catch(() => { })
 }
 
 const getEnv = async () => {
-  const gpEnvString = await gp({cmd: ['env']})
+  const gpEnvString = await gp({ cmd: ['env'] })
     .catch(() => "")
 
   const run2 = Deno.run({
@@ -587,7 +581,7 @@ const getUser = (env: any) => {
     )
   )
 
-  return fetch(`${apiUrl}/user`, { 
+  return fetch(`${apiUrl}/user`, {
     headers: {
       'Authorization': `Bearer ${AUTH_TOKEN}`
     }
@@ -650,7 +644,7 @@ const getHorizonEndpoint = (): Promise<string> => {
 const isAccountFunded = async (pk: string): Promise<boolean> => {
   return await getHorizonEndpoint()
     .then(horizon => fetch(`${horizon}/accounts/${pk}`))
-    .then(({status}) => status === 200)
+    .then(({ status }) => status === 200)
 }
 
 const doFund = (pk: string) => {
@@ -659,44 +653,87 @@ const doFund = (pk: string) => {
     .catch(printErrorBreak)
 }
 
-const getRPCStatus = (horizon: string) => {
+type rpcStatusCode = 'unknown' | 'booting' | 'catching_up' | 'ready'
+type rpcStatusEmoji = '❌' | '⚙️' | '⏳' | '📡'
+interface RPCStatus {
+  ready: boolean,
+  status: rpcStatusCode,
+}
+
+const rpcEmotes: { [key in rpcStatusCode]: rpcStatusEmoji } = {
+  unknown: '❌',
+  booting: '⚙️',
+  catching_up: '⏳',
+  ready: '📡',
+}
+
+const getRPCStatus = (horizon: URL): Promise<RPCStatus> => {
+  let status: rpcStatusCode = 'unknown'
+
   return fetch(horizon)
     .then(handleResponse)
-    .then(({ingest_latest_ledger, core_latest_ledger}) => ingest_latest_ledger === core_latest_ledger)
-    .catch(() => false)
+    .then(({ ingest_latest_ledger, core_latest_ledger }) => {
+      if (core_latest_ledger > 0)
+        status = 'booting'
+      if (status === 'booting' && ingest_latest_ledger > 0)
+        status = 'catching_up'
+      if (status === 'catching_up' && ingest_latest_ledger >= core_latest_ledger - 2)
+        status = 'ready'
+
+      return {
+        ready: status === 'ready',
+        status,
+      }
+    })
+    .catch(() => ({ ready: false, status }))
+}
+
+enum knownHorizons {
+  KanayeNet = "https://kanaye-futurenet.stellar.quest:443",
+  nebolsin = "https://nebolsin-futurenet.stellar.quest:443",
+  kalepail = "https://kalepail-futurenet.stellar.quest:443",
+  silence = "https://silence-futurenet.stellar.quest:443",
+  Raph = "https://raph-futurenet.stellar.quest:443",
 }
 
 const selectRPCEndpoint = async () => {
   let altNet = await Select.prompt({
     message: "Would you like to switch to one of our official endpoints?",
     options: [
-      { name: "No (use local)", value: "no" },
+      { name: "No (use local)", value: `${LOCAL_HORIZON}${SOROBAN_RPC_URI}` },
       { name: "Custom (your own)", value: "custom" },
       { name: "--------", value: '', disabled: true },
-      { name: "KanayeNet", value: "https://kanaye-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "nebolsin", value: "https://nebolsin-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "kalepail", value: "https://kalepail-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "silence", value: "https://silence-futurenet.stellar.quest:443/soroban/rpc" },
-      { name: "Raph", value: "https://raph-futurenet.stellar.quest:443/soroban/rpc" },
+      { name: "KanayeNet", value: `${knownHorizons.KanayeNet}${SOROBAN_RPC_URI}` },
+      { name: "nebolsin", value: `${knownHorizons.nebolsin}${SOROBAN_RPC_URI}` },
+      { name: "kalepail", value: `${knownHorizons.kalepail}${SOROBAN_RPC_URI}` },
+      { name: "silence", value: `${knownHorizons.silence}${SOROBAN_RPC_URI}` },
+      { name: "Raph", value: `${knownHorizons.Raph}${SOROBAN_RPC_URI}` },
     ],
     default: "no"
   });
 
-  if (altNet === 'no')
-    altNet = `${LOCAL_HORIZON}${SOROBAN_RPC_URI}`
+  if (altNet === 'custom') {
+    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and ${SOROBAN_RPC_URI} path)`);
 
-  else if (altNet === 'custom') {
-    const customAltNet = await Input.prompt(`Enter a custom RPC endpoint. (include the protocol, port number and /soroban/rpc path)`);
-
-    if (
-      customAltNet.length <= 'http://:65535/soroban/rpc'.length
-      || !customAltNet.includes('/soroban/rpc')
-    ) console.log(`❌ Invalid RPC endpoint`)
-    else altNet = customAltNet
+    try {
+      const customUrl = new URL(customAltNet)
+      if (['http:', 'https:'].includes(customUrl.protocol) && customUrl.pathname.includes(SOROBAN_RPC_URI)) {
+        altNet = customUrl.toString()
+      } else {
+        throw 'invalid'
+      }
+    } catch {
+      printErrorBreak(`❌ Invalid RPC endpoint`)
+    }
   }
 
   getDotFilesLocation()
-    .then((location: string) => Deno.writeFile(`${location}/.soroban-rpc-url`, new TextEncoder().encode(altNet)))
+    .then((location: string) => Deno.writeFileSync(
+      `${location}/.soroban-rpc-url`, 
+      new TextEncoder().encode(altNet)
+    ))
+
+  runRPC(null, false)
 }
 
 const getClaimToken = (checkToken: string, env: any) => {
@@ -738,7 +775,7 @@ const handleResponse = async (response: any) => {
       ? response.json()
       : response.text()
 
-    throw isResponseJson
+  throw isResponseJson
     ? {
       ...await response.json(),
       status: response.status
@@ -786,10 +823,6 @@ yargs(Deno.args)
     .options('change', {
       describe: 'Change the default RPC endpoint',
       alias: ['c']
-    })
-    .options('short', {
-      describe: 'Only show the status icon',
-      alias: ['s']
     }), runRPC)
   .command('*', '', {}, runHelp)
   .showHelpOnFail(false)
