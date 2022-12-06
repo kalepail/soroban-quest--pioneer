@@ -283,8 +283,12 @@ const runFund = async (argv: any) => {
 }
 
 const runCheck = async (argv: any) => {
-  if (!argv.index)
+  if (!argv.index) {
+    if (argv.index === 0)
+      throw 'Quest 0 is just for practice and cannot be checked with squirtle'
+
     throw '--index argument must be a positive integer'
+  }
 
   const index = argv.index - 1 // flag isn't zero indexed but the API is
 
