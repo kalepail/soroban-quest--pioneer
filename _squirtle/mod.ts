@@ -527,7 +527,7 @@ const openLatestReadme = async () => {
   
   const latestReadme = await Deno.run({
     cwd: rootDir,
-    cmd: ['find', 'quests', '-name', 'README.md'],
+    cmd: ['find', 'quests', '-maxdepth', '2', '-name', 'README.md'],
     stdout: "piped",
   })
   .output()
