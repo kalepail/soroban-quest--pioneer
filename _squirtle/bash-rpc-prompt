@@ -1,9 +1,0 @@
-function __rpc_status {
-    local="$(sq rpc -pl 2> /dev/null)"
-    selected="$(sq rpc -pn 2> /dev/null)"
-    selected="${selected/local/}"
-    combined="${selected:+\xf0\x9f\x94\x97${selected}|}${local}"
-    echo -e "\xf0\x9f\xa7\xae${combined}"
-}
-export SOROBAN_NETWORK_PASSPHRASE="Test SDF Future Network ; October 2022"
-export PS1="\\[\\]╓─\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\n╙─futurenet[\$(__rpc_status)] \\\$ \\[\\]"
