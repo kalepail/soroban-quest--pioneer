@@ -5,7 +5,6 @@
 [package]
 name = "soroban-hello-world-contract"
 version = "0.0.0"
-authors = ["Stellar Development Foundation <info@stellar.org>"]
 license = "Apache-2.0"
 # An "edition" is Rust's way of introducing backwards-incompatible changes to
 # the language. Here, we are using the latest edition.
