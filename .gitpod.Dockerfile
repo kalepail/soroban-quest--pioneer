@@ -1,5 +1,8 @@
 # Our customized docker image uses Gitpod's "workspace-full" image as a base.
 FROM gitpod/workspace-full:2022-11-09-13-54-49
+
+# A Dockerfile's `LABEL` instruction adds metadata to an image, here we are
+# using the `version` key to keep track with the "main" soroban quest repo.
 LABEL version="1.1.15"
 
 # These "RUN" shell commands are run on top of the "workspace-full" image, and
