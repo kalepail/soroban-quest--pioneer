@@ -13,14 +13,6 @@ members = [
     "quests/0-hello-world"
 ]
 
-# Here we specify our compiler settings as a "profile" that we specify when we
-# build our package.
-[profile.release-with-logs]
-# The "release-with-logs" profile is almost identical to the "release" profile
-inherits = "release"
-# EXCEPT we want to include runtime validation when building for development
-debug-assertions = true
-
 # The "release" profile specifies compiler options for our production build.
 [profile.release]
 # Optimize for binary size, turn off loop vectorization.
@@ -39,3 +31,13 @@ panic = "abort"
 codegen-units = 1
 # Use link time optimizations to generate a better optimzed binary.
 lto = true
+
+[workspace.dependencies.soroban-sdk]
+version = "0.3.2"
+git = "https://github.com/stellar/rs-soroban-sdk"
+rev = "e2ecbee"
+
+[workspace.dependencies.soroban-auth]
+version = "0.3.2"
+git = "https://github.com/stellar/rs-soroban-sdk"
+rev = "e2ecbee"
